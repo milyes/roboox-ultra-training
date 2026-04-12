@@ -1,0 +1,30 @@
+{
+    "episodic": [
+        {
+            "timestamp": "2026-04-12T13:05:43.437267",
+            "action": "Maintenance pr\u00e9ventive des capteurs Fusion",
+            "result": "SUCCESS_SIMULATED",
+            "confidence": 0.99
+        },
+        {
+            "timestamp": "2026-04-12T13:07:51.345372",
+            "action": "Maintenance pr\u00e9ventive des capteurs Fusion",
+            "result": "SUCCESS_SIMULATED",
+            "confidence": 0.99
+        },
+        {
+            "timestamp": "2026-04-12T13:10:53.551116",
+            "action": "Maintenance pr\u00e9ventive des capteurs Fusion",
+            "result": "SUCCESS_SIMULATED",
+            "confidence": 0.99
+        },
+        {
+            "timestamp": "2026-04-12T13:14:50.513009",
+            "action": "Maintenance pr\u00e9ventive des capteurs Fusion",
+            "result": "SUCCESS_SIMULATED",
+            "confidence": 0.99
+        }
+    ],
+    "semantic": {},
+    "context_cache": []
+}
