@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Z-H202.ia — Architectures IA 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#06080f;--bg2:#0c0f1a;--bg3:#111827;--bg4:#1a2236;
+  --border:#1e2d45;--border2:#263552;
+  --txt:#c8d8f0;--txt2:#7a90b0;--txt3:#3a506a;
+  --green:#00e5a0;--green2:#00b37a;--green3:#003d2a;
+  --blue:#3b9eff;--blue2:#1a6ecc;--blue3:#0a1f3a;
+  --purple:#a78bfa;--purple2:#6d49e8;--purple3:#1a0f3a;
+  --amber:#f59e0b;--amber2:#b87008;--amber3:#2a1a00;
+  --coral:#ff6b4a;--coral2:#cc4020;--coral3:#2a0e08;
+  --teal:#2dd4bf;--teal2:#0f9688;--teal3:#002d28;
+  --red:#f87171;--font-mono:'JetBrains Mono',monospace;--font-display:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-mono);font-size:13px;line-height:1.7;overflow-x:hidden}
+
+/* SCANLINE OVERLAY */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:9999}
+
+/* LAYOUT */
+#app{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+#sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+#logo{padding:20px 16px 14px;border-bottom:1px solid var(--border)}
+#logo .sys{font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--green);letter-spacing:.05em}
+#logo .ver{font-size:.62rem;color:var(--txt3);margin-top:2px}
+#logo .status{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:.62rem;color:var(--green2)}
+#logo .dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+nav{flex:1;padding:8px 0}
+.nav-section{padding:10px 16px 4px;font-size:.58rem;color:var(--txt3);letter-spacing:.15em;text-transform:uppercase}
+.nav-item{display:block;padding:7px 16px;color:var(--txt2);text-decoration:none;font-size:.72rem;cursor:pointer;border-left:2px solid transparent;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-item:hover{color:var(--txt);background:var(--bg3);border-left-color:var(--border2)}
+.nav-item.active{color:var(--green);background:var(--green3);border-left-color:var(--green)}
+.nav-badge{float:right;font-size:.55rem;background:var(--bg4);color:var(--txt3);padding:1px 5px;border-radius:3px;margin-top:1px}
+
+/* MAIN */
+#main{margin-left:220px;flex:1;max-width:calc(100vw - 220px)}
+
+/* TOPBAR */
+#topbar{position:sticky;top:0;z-index:50;background:rgba(6,8,15,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;justify-content:space-between}
+#topbar .breadcrumb{font-size:.7rem;color:var(--txt3)}
+#topbar .breadcrumb span{color:var(--txt2)}
+#topbar .meta{font-size:.65rem;color:var(--txt3);display:flex;gap:16px}
+#topbar .meta .chip{background:var(--bg4);border:1px solid var(--border);padding:2px 8px;border-radius:3px;color:var(--green);font-size:.6rem}
+
+/* SECTIONS */
+.section{display:none;padding:28px 28px 60px;animation:fadeIn .25s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION HEADER */
+.sec-header{margin-bottom:28px}
+.sec-title{font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--txt);display:flex;align-items:center;gap:12px}
+.sec-title .icon{font-size:1.2rem}
+.sec-subtitle{font-size:.75rem;color:var(--txt2);margin-top:6px;max-width:700px}
+.tag{display:inline-block;font-size:.58rem;padding:2px 7px;border-radius:3px;margin-left:10px;vertical-align:middle;letter-spacing:.08em}
+.tag.green{background:var(--green3);color:var(--green);border:1px solid var(--green2)}
+.tag.blue{background:var(--blue3);color:var(--blue);border:1px solid var(--blue2)}
+.tag.amber{background:var(--amber3);color:var(--amber);border:1px solid var(--amber2)}
+.tag.purple{background:var(--purple3);color:var(--purple);border:1px solid var(--purple2)}
+.tag.coral{background:var(--coral3);color:var(--coral);border:1px solid var(--coral2)}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px}
+.card.green{border-color:var(--green2);background:linear-gradient(135deg,var(--green3),var(--bg2))}
+.card.blue{border-color:var(--blue2);background:linear-gradient(135deg,var(--blue3),var(--bg2))}
+.card.purple{border-color:var(--purple2);background:linear-gradient(135deg,var(--purple3),var(--bg2))}
+.card.amber{border-color:var(--amber2);background:linear-gradient(135deg,var(--amber3),var(--bg2))}
+.card.coral{border-color:var(--coral2);background:linear-gradient(135deg,var(--coral3),var(--bg2))}
+.card.teal{border-color:var(--teal2);background:linear-gradient(135deg,var(--teal3),var(--bg2))}
+.card h3{font-family:var(--font-display);font-size:.85rem;font-weight:600;margin-bottom:8px;color:var(--txt)}
+.card .kv{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:.7rem}
+.card .kv:last-child{border-bottom:none}
+.card .kv .k{color:var(--txt2)}
+.card .kv .v{color:var(--green);font-weight:600}
+.card .kv .v.blue{color:var(--blue)}
+.card .kv .v.amber{color:var(--amber)}
+.card .kv .v.purple{color:var(--purple)}
+.card .kv .v.coral{color:var(--coral)}
+.card .kv .v.teal{color:var(--teal)}
+
+/* CODE BLOCK */
+.codeblock{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin:12px 0;overflow-x:auto;font-size:.7rem;line-height:1.8;color:var(--txt2)}
+.codeblock .c-green{color:var(--green)}
+.codeblock .c-blue{color:var(--blue)}
+.codeblock .c-amber{color:var(--amber)}
+.codeblock .c-purple{color:var(--purple)}
+.codeblock .c-coral{color:var(--coral)}
+.codeblock .c-teal{color:var(--teal)}
+.codeblock .c-dim{color:var(--txt3)}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:.7rem}
+th{background:var(--bg4);color:var(--txt2);font-weight:600;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border2);font-size:.65rem;letter-spacing:.06em;text-transform:uppercase}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--txt);vertical-align:top}
+tr:hover td{background:var(--bg3)}
+td .pill{display:inline-block;font-size:.6rem;padding:1px 6px;border-radius:10px}
+td .pill.green{background:var(--green3);color:var(--green)}
+td .pill.blue{background:var(--blue3);color:var(--blue)}
+td .pill.amber{background:var(--amber3);color:var(--amber)}
+td .pill.red{background:#2a0808;color:var(--red)}
+
+/* DIAGRAM BOX */
+.diagram{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:20px;margin:14px 0;font-family:var(--font-mono);font-size:.68rem;line-height:1.9;overflow-x:auto;color:var(--txt2)}
+.diagram .node-g{color:var(--green)}
+.diagram .node-b{color:var(--blue)}
+.diagram .node-p{color:var(--purple)}
+.diagram .node-a{color:var(--amber)}
+.diagram .node-c{color:var(--coral)}
+.diagram .node-t{color:var(--teal)}
+.diagram .node-d{color:var(--txt3)}
+.diagram .arr{color:var(--txt3)}
+
+/* TIER STACK (banking) */
+.tier-stack{display:flex;flex-direction:column;gap:6px;margin:14px 0}
+.tier{border-radius:10px;border:1px dashed;padding:14px 16px}
+.tier-head{font-size:.65rem;font-weight:700;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.tier-head .desc{font-weight:400;letter-spacing:0;opacity:.6;font-size:.62rem}
+.tier-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tnode{border-radius:7px;padding:10px 12px;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.tnode:hover{transform:translateY(-1px)}
+.tnode .tn-label{font-size:.75rem;font-weight:600;margin-bottom:3px}
+.tnode .tn-sub{font-size:.6rem;opacity:.7}
+
+.t-edge{border-color:#1D9E75;background:#06150e}
+.t-edge .tier-head{color:#00e5a0}
+.t-edge .tnode{background:#0a2018;border-color:#164d30}
+.t-edge .tn-label{color:#4ade80}
+
+.t-sec{border-color:#BA7517;background:#150e03}
+.t-sec .tier-head{color:#f59e0b}
+.t-sec .tnode{background:#1e1404;border-color:#6b420a}
+.t-sec .tn-label{color:#fcd34d}
+
+.t-cloud{border-color:#378ADD;background:#030d1f}
+.t-cloud .tier-head{color:#3b9eff}
+.t-cloud .tnode{background:#061428;border-color:#1244730}
+.t-cloud .tn-label{color:#93c5fd}
+
+.t-onprem{border-color:#7F77DD;background:#08051f}
+.t-onprem .tier-head{color:#a78bfa}
+.t-onprem .tnode{background:#100a2e;border-color:#3b2f96}
+.t-onprem .tn-label{color:#c4b5fd}
+
+.t-gov{border-color:#D85A30;background:#160600}
+.t-gov .tier-head{color:#f97316}
+.t-gov .tnode{background:#1e0a02;border-color:#7c2d12}
+.t-gov .tn-label{color:#fdba74}
+
+.t-obs{border-color:#4a5568;background:#0a0a0a}
+.t-obs .tier-head{color:#94a3b8}
+.t-obs .tnode{background:#111;border-color:#2d3748}
+.t-obs .tn-label{color:#cbd5e1}
+
+/* TOOLTIP PANEL */
+#detail-panel{background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:14px 16px;margin-top:10px;font-size:.72rem;color:var(--txt2);min-height:48px;transition:all .2s;display:none}
+#detail-panel.show{display:block}
+#detail-panel .dp-title{font-family:var(--font-display);font-size:.8rem;font-weight:600;color:var(--green);margin-bottom:6px}
+
+/* METRIC BAR */
+.metric-bar{margin:8px 0}
+.metric-bar .mb-label{display:flex;justify-content:space-between;font-size:.65rem;color:var(--txt2);margin-bottom:4px}
+.metric-bar .mb-track{background:var(--bg4);border-radius:3px;height:5px;overflow:hidden}
+.metric-bar .mb-fill{height:100%;border-radius:3px;transition:width 1s ease}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--bg3);padding:3px;border-radius:7px;width:fit-content}
+.tab{padding:6px 14px;border-radius:5px;font-size:.7rem;cursor:pointer;color:var(--txt2);transition:all .15s}
+.tab.active{background:var(--bg4);color:var(--txt);border:1px solid var(--border2)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* FLOW ARROW */
+.flow-arrow{text-align:center;color:var(--txt3);font-size:.9rem;margin:2px 0;line-height:1}
+
+/* KPI ROW */
+.kpi-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.kpi{flex:1;min-width:120px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 16px}
+.kpi .kpi-val{font-family:var(--font-display);font-size:1.5rem;font-weight:800;margin-bottom:2px}
+.kpi .kpi-label{font-size:.62rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em}
+.kpi .kpi-delta{font-size:.62rem;margin-top:4px}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:24px;margin:12px 0}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:16px}
+.tl-item::before{content:'';position:absolute;left:-21px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--green);border:2px solid var(--bg)}
+.tl-item .tl-year{font-size:.6rem;color:var(--green);font-weight:700;margin-bottom:2px}
+.tl-item .tl-text{font-size:.72rem;color:var(--txt2)}
+
+/* COMPARISON */
+.compare{display:flex;gap:12px;margin:12px 0}
+.compare-col{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.compare-col .cc-head{font-family:var(--font-display);font-size:.8rem;font-weight:600;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.compare-col .cc-item{display:flex;align-items:flex-start;gap:6px;padding:5px 0;font-size:.7rem;border-bottom:1px solid var(--border);color:var(--txt2)}
+.compare-col .cc-item:last-child{border-bottom:none}
+.compare-col .cc-item .ico{flex-shrink:0;width:14px;text-align:center}
+
+/* ALERT */
+.alert{border-radius:6px;padding:10px 14px;margin:10px 0;font-size:.72rem;display:flex;gap:8px;align-items:flex-start}
+.alert.warn{background:var(--amber3);border-left:3px solid var(--amber);color:#fde68a}
+.alert.info{background:var(--blue3);border-left:3px solid var(--blue);color:#bfdbfe}
+.alert.success{background:var(--green3);border-left:3px solid var(--green);color:#a7f3d0}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+@media(max-width:768px){
+  #sidebar{display:none}
+  #main{margin-left:0;max-width:100vw}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  .tier-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div id="logo">
+    <div class="sys">Z-H202.ia</div>
+    <div class="ver">Mode Haute Performance 2026 · v4.2</div>
+    <div class="status"><span class="dot"></span>SYSTÈME EN LIGNE</div>
+  </div>
+  <nav>
+    <div class="nav-section">Référentiel IA</div>
+    <a class="nav-item active" onclick="show('overview')">◈ Vue d'ensemble <span class="nav-badge">7</span></a>
+    <a class="nav-item" onclick="show('transformers')">◈ Transformers <span class="nav-badge">ADV</span></a>
+    <a class="nav-item" onclick="show('moe')">◈ Mixture of Experts <span class="nav-badge">ADV</span></a>
+    <div class="nav-section">Retrieval & Agents</div>
+    <a class="nav-item" onclick="show('rag')">◈ RAG — 3 niveaux <span class="nav-badge">ADV</span></a>
+    <a class="nav-item" onclick="show('agents')">◈ Systèmes agentiques <span class="nav-badge">ADV</span></a>
+    <div class="nav-section">Infrastructure</div>
+    <a class="nav-item" onclick="show('stack')">◈ Stack IA complète <span class="nav-badge">ADV</span></a>
+    <a class="nav-item" onclick="show('governance')">◈ Gouvernance & Obs. <span class="nav-badge">ADV</span></a>
+    <a class="nav-item" onclick="show('trends')">◈ Tendances 2026+ <span class="nav-badge">NEW</span></a>
+    <div class="nav-section">Cas d'usage</div>
+    <a class="nav-item" onclick="show('banking')">◈ Stack Bancaire <span class="nav-badge">LIVE</span></a>
+  </nav>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+  <div id="topbar">
+    <div class="breadcrumb">Z-H202.ia / <span id="breadcrumb-txt">Vue d'ensemble</span></div>
+    <div class="meta">
+      <span class="chip">● ACTIF</span>
+      <span>2026 · Haute Performance</span>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION OVERVIEW ═══ -->
+  <div id="s-overview" class="section active">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Vue d'ensemble — Architectures IA 2026<span class="tag green">COMPLET</span></div>
+      <div class="sec-subtitle">Référentiel exhaustif couvrant les 7 piliers des architectures IA modernes : modèles, retrieval, agents, infrastructure, gouvernance et tendances émergentes.</div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-val" style="color:var(--green)">7</div><div class="kpi-label">Piliers couverts</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--blue)">2026+</div><div class="kpi-label">Horizon temporel</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--amber)">MoE</div><div class="kpi-label">Paradigme dominant</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--purple)">RAG³</div><div class="kpi-label">Niveaux retrieval</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--coral)">AGT</div><div class="kpi-label">Agentic native</div></div>
+    </div>
+    <div class="grid3">
+      <div class="card green" style="cursor:pointer" onclick="show('transformers')">
+        <h3 style="color:var(--green)">① Transformers & Modèles</h3>
+        <div class="kv"><span class="k">Attention type</span><span class="v">GQA / MLA / NSA</span></div>
+        <div class="kv"><span class="k">Génération</span><span class="v">2026+ Agentic native</span></div>
+        <div class="kv"><span class="k">Activation</span><span class="v">SwiGLU / GeGLU</span></div>
+        <div class="kv"><span class="k">Architecture hybride</span><span class="v">SSM + Attention</span></div>
+      </div>
+      <div class="card blue" style="cursor:pointer" onclick="show('moe')">
+        <h3 style="color:var(--blue)">② Mixture of Experts</h3>
+        <div class="kv"><span class="k">Paradigme</span><span class="v">Sparse Top-K routing</span></div>
+        <div class="kv"><span class="k">Experts actifs</span><span class="v">2–8 / token</span></div>
+        <div class="kv"><span class="k">Efficacité compute</span><span class="v blue">×6 vs dense</span></div>
+        <div class="kv"><span class="k">Exemples</span><span class="v">DeepSeek / Mixtral</span></div>
+      </div>
+      <div class="card purple" style="cursor:pointer" onclick="show('rag')">
+        <h3 style="color:var(--purple)">③ RAG — 3 niveaux</h3>
+        <div class="kv"><span class="k">Classique</span><span class="v purple">Dense + index</span></div>
+        <div class="kv"><span class="k">Avancé</span><span class="v purple">Hybrid + rerank</span></div>
+        <div class="kv"><span class="k">Agentic</span><span class="v purple">Multi-tools + loop</span></div>
+        <div class="kv"><span class="k">Hallucination</span><span class="v" style="color:var(--green)">&lt; 3% cible</span></div>
+      </div>
+      <div class="card amber" style="cursor:pointer" onclick="show('agents')">
+        <h3 style="color:var(--amber)">④ Systèmes agentiques</h3>
+        <div class="kv"><span class="k">Mémoire</span><span class="v amber">STM + LTM + Episodic</span></div>
+        <div class="kv"><span class="k">Loop</span><span class="v amber">Observe → Plan → Act</span></div>
+        <div class="kv"><span class="k">Frameworks</span><span class="v">LangGraph / AutoGen</span></div>
+        <div class="kv"><span class="k">Patterns</span><span class="v">Orchestrator / Swarm</span></div>
+      </div>
+      <div class="card teal" style="cursor:pointer" onclick="show('stack')">
+        <h3 style="color:var(--teal)">⑤ Stack IA complète</h3>
+        <div class="kv"><span class="k">Moteur inférence</span><span class="v teal">vLLM / Triton / SGLang</span></div>
+        <div class="kv"><span class="k">Orchestration</span><span class="v teal">K8s + Ray Serve</span></div>
+        <div class="kv"><span class="k">Déploiement</span><span class="v">Cloud / Edge / On-prem</span></div>
+        <div class="kv"><span class="k">Pattern</span><span class="v teal">Hybrid Tiered</span></div>
+      </div>
+      <div class="card coral" style="cursor:pointer" onclick="show('governance')">
+        <h3 style="color:var(--coral)">⑥ Gouvernance & Obs.</h3>
+        <div class="kv"><span class="k">Guardrails</span><span class="v coral">NeMo + Llama Guard</span></div>
+        <div class="kv"><span class="k">Traçabilité</span><span class="v coral">LangSmith / Langfuse</span></div>
+        <div class="kv"><span class="k">TTFT cible</span><span class="v" style="color:var(--green)">&lt; 200ms</span></div>
+        <div class="kv"><span class="k">Conformité</span><span class="v">AI Act / RGPD</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:4px">
+      <h3>Matrice de maturité technologique — 2026</h3>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Technologie</th><th>Maturité</th><th>Adoption</th><th>ROI</th><th>Complexité</th><th>Cas d'usage principal</th></tr>
+          <tr><td>Sparse MoE</td><td><span class="pill green">Production</span></td><td>Élevée</td><td><span class="pill green">+++</span></td><td>Haute</td><td>LLM frontier scale</td></tr>
+          <tr><td>RAG Hybride</td><td><span class="pill green">Production</span></td><td>Très élevée</td><td><span class="pill green">+++</span></td><td>Moyenne</td><td>Base de connaissances</td></tr>
+          <tr><td>Agentic RAG</td><td><span class="pill blue">Scaling</span></td><td>Moyenne</td><td><span class="pill blue">++</span></td><td>Haute</td><td>Recherche complexe</td></tr>
+          <tr><td>Multi-agents</td><td><span class="pill blue">Scaling</span></td><td>Croissante</td><td><span class="pill blue">++</span></td><td>Très haute</td><td>Automation workflows</td></tr>
+          <tr><td>SSM Hybride (Mamba)</td><td><span class="pill amber">R&D avancée</span></td><td>Faible</td><td><span class="pill amber">+?</span></td><td>Haute</td><td>Long context &gt;1M tokens</td></tr>
+          <tr><td>Test-Time Compute</td><td><span class="pill green">Production</span></td><td>Croissante</td><td><span class="pill green">+++</span></td><td>Moyenne</td><td>Raisonnement avancé</td></tr>
+          <tr><td>Agent OS</td><td><span class="pill amber">Émergent</span></td><td>Très faible</td><td><span class="pill amber">???</span></td><td>Extrême</td><td>Autonomie longue durée</td></tr>
+          <tr><td>Neuromorphic AI</td><td><span class="pill red">Recherche</span></td><td>Lab only</td><td><span class="pill red">–</span></td><td>Extrême</td><td>Edge ultra-faible conso</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION TRANSFORMERS ═══ -->
+  <div id="s-transformers" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Transformers & Architectures de modèles<span class="tag green">ADV 2026</span></div>
+      <div class="sec-subtitle">Anatomie complète des architectures Transformer modernes, évolution de l'attention, et paradigmes émergents 2026.</div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="card">
+          <h3>Architecture Transformer — Bloc fondamental</h3>
+          <div class="diagram">
+<span class="node-d">INPUT TOKENS</span>
+    <span class="arr">│</span>
+    <span class="arr">▼</span>
+<span class="node-b">┌─────────────────────────────┐</span>
+<span class="node-b">│   EMBEDDING + POSITIONAL    │</span>
+<span class="node-b">│      ENCODING               │</span>
+<span class="node-b">└────────────┬────────────────┘</span>
+             <span class="arr">│</span>
+     <span class="node-g">┌───────▼────────┐</span>
+     <span class="node-g">│  MULTI-HEAD    │  ◄── Q·K^T / √d_k → Softmax → V</span>
+     <span class="node-g">│  SELF-ATTENTION│</span>
+     <span class="node-g">└───────┬────────┘</span>
+             <span class="arr">│</span>
+     <span class="node-p">┌───────▼────────┐</span>
+     <span class="node-p">│  FEED-FORWARD  │  ◄── 2 couches + SwiGLU</span>
+     <span class="node-p">│  NETWORK (FFN) │</span>
+     <span class="node-p">└───────┬────────┘</span>
+             <span class="arr">│</span>
+     <span class="node-a">┌───────▼────────┐</span>
+     <span class="node-a">│  LAYER NORM +  │  ◄── Residual connections</span>
+     <span class="node-a">│  RESIDUAL      │</span>
+     <span class="node-a">└───────┬────────┘</span>
+             <span class="arr">│</span>  (×N blocs)
+          <span class="node-d">OUTPUT</span>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>Évolution des mécanismes d'attention</h3>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-year">MHA — Multi-Head Attention (base)</div><div class="tl-text">N têtes Q, K, V indépendantes. Paramètres : O(d²). Standard GPT-3.</div></div>
+            <div class="tl-item"><div class="tl-year" style="color:var(--blue)">MQA — Multi-Query Attention</div><div class="tl-text">1 seule K,V partagée entre toutes les têtes Q. Réduit le KV-cache. Falcon.</div></div>
+            <div class="tl-item"><div class="tl-year" style="color:var(--purple)">GQA — Grouped-Query Attention ← standard 2024</div><div class="tl-text">Groupes de K,V partagées. Compromis MHA/MQA. Llama 3, Mistral, Gemma.</div></div>
+            <div class="tl-item"><div class="tl-year" style="color:var(--amber)">MLA — Multi-head Latent Attention</div><div class="tl-text">Compression latente des K,V via matrices low-rank. KV-cache ×5 plus petit. DeepSeek V2/V3.</div></div>
+            <div class="tl-item"><div class="tl-year" style="color:var(--coral)">NSA — Native Sparse Attention ← 2025+</div><div class="tl-text">Sparsité native apprise. O(n√n) au lieu de O(n²). Contextes &gt; 1M tokens.</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card blue">
+          <h3>Évolution des architectures (2020 → 2026)</h3>
+          <div class="tbl-wrap">
+            <table>
+              <tr><th>Année</th><th>Architecture</th><th>Innovation</th><th>Exemple</th></tr>
+              <tr><td>2020</td><td>Dense GPT</td><td>Scale brut</td><td>GPT-3 175B</td></tr>
+              <tr><td>2022</td><td>Sparse MoE</td><td>Routing conditionnel</td><td>Switch Transformer</td></tr>
+              <tr><td>2023</td><td>RLHF + SFT</td><td>Alignement humain</td><td>GPT-4, Claude 2</td></tr>
+              <tr><td>2024</td><td>MoE + MLA</td><td>KV-cache compress.</td><td>DeepSeek V2/V3</td></tr>
+              <tr><td>2025</td><td>Hybrid SSM</td><td>Mamba + Attention</td><td>Jamba, Zamba</td></tr>
+              <tr><td style="color:var(--green)">2026+</td><td style="color:var(--green)">Agentic native</td><td style="color:var(--green)">Raisonnement intégré</td><td style="color:var(--green)">o-series, R-models</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="card purple" style="margin-top:12px">
+          <h3>Fonctions d'activation FFN — Évolution</h3>
+          <div class="kv"><span class="k">ReLU (2017)</span><span class="v purple">max(0, x) — simple, mort des neurones</span></div>
+          <div class="kv"><span class="k">GELU (BERT)</span><span class="v purple">Gaussian Error Linear Unit</span></div>
+          <div class="kv"><span class="k">SwiGLU (PaLM)</span><span class="v purple">Swish(xW) ⊗ (xV) — standard 2024</span></div>
+          <div class="kv"><span class="k">GeGLU</span><span class="v purple">GELU(xW) ⊗ (xV) — qualité max</span></div>
+          <div class="kv"><span class="k">ReLU² (2024)</span><span class="v purple">Sparse, compatible MoE fine-grained</span></div>
+        </div>
+        <div class="card teal" style="margin-top:12px">
+          <h3>Positional Encoding — Comparatif</h3>
+          <div class="kv"><span class="k">Sinusoïdal (orig.)</span><span class="v teal">Fixe, extrapolation limitée</span></div>
+          <div class="kv"><span class="k">ALiBi</span><span class="v teal">Biais linéaire, bonne extrapol.</span></div>
+          <div class="kv"><span class="k">RoPE ← standard</span><span class="v teal">Rotation, contexte extensible</span></div>
+          <div class="kv"><span class="k">YaRN / LongRoPE</span><span class="v teal">RoPE étendu 1M+ tokens</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Architecture Hybride SSM + Attention — Principe (2025+)</h3>
+      <div class="diagram">
+<span class="node-d">TOKEN SEQUENCE (contexte très long)</span>
+         <span class="arr">│</span>
+<span class="node-g">┌──────────────────────────────────────────────────┐</span>
+<span class="node-g">│                BLOC HYBRIDE                       │</span>
+<span class="node-g">│                                                   │</span>
+<span class="node-b">│  ┌─────────────┐      ┌────────────────────────┐  │</span>
+<span class="node-b">│  │  SSM Layer  │      │  Attention Layer       │  │</span>
+<span class="node-b">│  │  (Mamba)    │      │  (GQA / MLA)           │  │</span>
+<span class="node-b">│  │             │      │                        │  │</span>
+<span class="node-b">│  │ O(n) recur. │      │ O(n²) pour context     │  │</span>
+<span class="node-b">│  │ local dep.  │      │ global dependencies    │  │</span>
+<span class="node-b">│  └──────┬──────┘      └───────────┬────────────┘  │</span>
+<span class="node-g">│         └──────────────────────────┘               │</span>
+<span class="node-g">│                    MERGE                          │</span>
+<span class="node-g">└──────────────────────────┬───────────────────────┘</span>
+                           <span class="arr">│</span>
+               <span class="node-a">Avantage : O(n) global + précision locale</span>
+               <span class="node-a">Contextes &gt; 1M tokens à coût linéaire</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION MOE ═══ -->
+  <div id="s-moe" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Mixture of Experts (MoE)<span class="tag blue">ADV 2026</span></div>
+      <div class="sec-subtitle">Architecture sparse conditionnelle : routing intelligent, spécialisation des experts, efficacité computationnelle maximale.</div>
+    </div>
+    <div class="grid2">
+      <div class="card blue">
+        <h3>Mécanisme de routing — Détail mathématique</h3>
+        <div class="diagram">
+<span class="node-d">TOKEN x ∈ R^d</span>
+         <span class="arr">│</span>
+<span class="node-b">┌──────────────────────────────────┐</span>
+<span class="node-b">│        ROUTER (Gating)           │</span>
+<span class="node-b">│                                  │</span>
+<span class="node-b">│  G(x) = Softmax(W_g · x + ε)    │</span>
+<span class="node-b">│  ε = noise pour exploration      │</span>
+<span class="node-b">│  → sélection Top-K experts       │</span>
+<span class="node-b">└──────────────────────────────────┘</span>
+    <span class="arr">│        │        │</span>
+    <span class="arr">▼        ▼        ▼</span>
+<span class="node-g">┌───────┐ ┌───────┐ ┌───────┐</span>
+<span class="node-g">│ Exp.1 │ │ Exp.7 │ │Exp.12 │  ← seuls K activés</span>
+<span class="node-g">│ FFN   │ │ FFN   │ │ FFN   │</span>
+<span class="node-g">└───┬───┘ └───┬───┘ └───┬───┘</span>
+    <span class="arr">└──────────┴──────────┘</span>
+               <span class="arr">│</span>
+    <span class="node-a">Σ g_i(x) · E_i(x)  (somme pondérée)</span>
+               <span class="arr">│</span>
+           <span class="node-d">OUTPUT</span>
+        </div>
+      </div>
+      <div>
+        <div class="card green">
+          <h3>Efficacité MoE vs Dense</h3>
+          <div class="metric-bar">
+            <div class="mb-label"><span>Params totaux DeepSeek V3</span><span style="color:var(--green)">671B</span></div>
+            <div class="mb-track"><div class="mb-fill" style="width:100%;background:var(--green2)"></div></div>
+          </div>
+          <div class="metric-bar">
+            <div class="mb-label"><span>Params actifs par token</span><span style="color:var(--blue)">37B (5.5%)</span></div>
+            <div class="mb-track"><div class="mb-fill" style="width:5.5%;background:var(--blue2)"></div></div>
+          </div>
+          <div class="metric-bar">
+            <div class="mb-label"><span>FLOPS vs dense équivalent</span><span style="color:var(--amber)">×0.17 (−83%)</span></div>
+            <div class="mb-track"><div class="mb-fill" style="width:17%;background:var(--amber2)"></div></div>
+          </div>
+          <div class="metric-bar">
+            <div class="mb-label"><span>Qualité relative</span><span style="color:var(--green)">≥ dense 70B</span></div>
+            <div class="mb-track"><div class="mb-fill" style="width:92%;background:var(--green)"></div></div>
+          </div>
+        </div>
+        <div class="card amber" style="margin-top:12px">
+          <h3>Problèmes critiques & Solutions</h3>
+          <div class="kv"><span class="k" style="color:var(--red)">🔴 Load Imbalance</span><span class="v amber">Auxiliary Loss + Cap. Factor</span></div>
+          <div class="kv"><span class="k" style="color:var(--red)">🔴 Routing Collapse</span><span class="v amber">Noise inject. + Z-loss reg.</span></div>
+          <div class="kv"><span class="k" style="color:var(--red)">🔴 All-to-All comm.</span><span class="v amber">Expert Parallel. + InfiniBand</span></div>
+          <div class="kv"><span class="k" style="color:var(--red)">🔴 Dead Experts</span><span class="v amber">Router z-loss + warm-up</span></div>
+          <div class="kv"><span class="k" style="color:var(--red)">🔴 Memory fragmentation</span><span class="v amber">Expert offloading (CPU)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Types de MoE — Taxonomie 2026</h3>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Type</th><th>Mécanisme</th><th>Experts actifs</th><th>Avantage</th><th>Limitation</th><th>Exemples</th></tr>
+          <tr><td>Sparse Top-K</td><td>Top-K routing par token</td><td>K=2 à 8</td><td>Efficacité standard</td><td>Load imbalance</td><td>Mixtral, Switch</td></tr>
+          <tr><td>Shared Expert</td><td>Expert commun + spécialisés</td><td>K+1</td><td>Stabilité, généralisme</td><td>Overhead fix</td><td>DeepSeek V2/V3</td></tr>
+          <tr><td>Fine-grained</td><td>Experts très petits ×N</td><td>K×factor</td><td>Granularité extrême</td><td>Routing overhead</td><td>DeepSeek V3</td></tr>
+          <tr><td>Hierarchical</td><td>MoE dans MoE</td><td>Variable</td><td>Spécialisation multi-niveau</td><td>Complexité</td><td>Recherche 2025</td></tr>
+          <tr><td>Soft MoE</td><td>Tokens mixés avant experts</td><td>Tous (soft)</td><td>Différentiabilité totale</td><td>Coût dense</td><td>Google Research</td></tr>
+          <tr><td>Expert Choice</td><td>Expert choisit ses tokens</td><td>Variable</td><td>Load balancing parfait</td><td>Latence variable</td><td>GShard variant</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card purple" style="margin-top:12px">
+      <h3>Parallélisme pour MoE — Architecture multi-GPU</h3>
+      <div class="diagram">
+<span class="node-d">STRATÉGIE DE PARALLÉLISME MoE (exemple 8 GPU)</span>
+
+<span class="node-b">Tensor Parallelism (TP)</span>  : Attention heads répartis entre GPU d'un même nœud
+<span class="node-g">Expert Parallelism (EP)</span>  : Chaque GPU héberge N experts différents
+<span class="node-p">Sequence Parallelism</span>  : Tokens répartis entre GPU pour layer norms
+<span class="node-a">Pipeline Parallelism</span>  : Couches du modèle réparties en stages
+
+<span class="node-d">Communication critique : All-to-All pour router tokens vers experts</span>
+<span class="node-d">→ NVLink 900 GB/s intra-nœud · InfiniBand 400 Gb/s inter-nœuds</span>
+<span class="node-d">→ Overlap comm./compute avec CUDA streams asynchrones</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION RAG ═══ -->
+  <div id="s-rag" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>RAG — 3 niveaux de sophistication<span class="tag purple">ADV 2026</span></div>
+      <div class="sec-subtitle">Retrieval Augmented Generation : du pipeline classique au système agentic avec self-correction et orchestration multi-sources.</div>
+    </div>
+    <div class="tabs" id="rag-tabs">
+      <div class="tab active" onclick="switchTab('rag','classique')">① Classique</div>
+      <div class="tab" onclick="switchTab('rag','avance')">② Avancé</div>
+      <div class="tab" onclick="switchTab('rag','agentic')">③ Agentic</div>
+      <div class="tab" onclick="switchTab('rag','compare')">④ Comparatif</div>
+    </div>
+    <div id="rag-classique" class="tab-content active">
+      <div class="grid2">
+        <div class="card green">
+          <h3>Pipeline RAG Classique</h3>
+          <div class="diagram">
+<span class="node-d">QUERY UTILISATEUR</span>
+         <span class="arr">│</span>
+<span class="node-g">┌───────────────────────────────┐</span>
+<span class="node-g">│  EMBEDDING MODEL              │</span>
+<span class="node-g">│  text-embedding-3-large       │</span>
+<span class="node-g">│  BGE-M3 (multilingue)         │</span>
+<span class="node-g">└──────────────┬────────────────┘</span>
+               <span class="arr">│ vecteur dense 1536d</span>
+<span class="node-b">┌──────────────▼────────────────┐</span>
+<span class="node-b">│  VECTOR SEARCH                │</span>
+<span class="node-b">│  cosine similarity · HNSW     │</span>
+<span class="node-b">│  Qdrant / pgvector / Weaviate │</span>
+<span class="node-b">└──────────────┬────────────────┘</span>
+               <span class="arr">│ TOP-K chunks (k=5..20)</span>
+<span class="node-p">┌──────────────▼────────────────┐</span>
+<span class="node-p">│  PROMPT ASSEMBLY              │</span>
+<span class="node-p">│  Context + Query → Prompt     │</span>
+<span class="node-p">└──────────────┬────────────────┘</span>
+               <span class="arr">│</span>
+<span class="node-a">┌──────────────▼────────────────┐</span>
+<span class="node-a">│  LLM GENERATION               │</span>
+<span class="node-a">│  Réponse ancrée sur sources   │</span>
+<span class="node-a">└──────────────┬────────────────┘</span>
+               <span class="arr">│</span>
+           <span class="node-d">RÉPONSE + CITATIONS</span>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3>Technologies & Outils</h3>
+            <div class="kv"><span class="k">Embedding</span><span class="v" style="color:var(--green)">BGE-M3 / text-embedding-3-large</span></div>
+            <div class="kv"><span class="k">Index type</span><span class="v" style="color:var(--green)">HNSW (ANN) · ef_search=200</span></div>
+            <div class="kv"><span class="k">Similarity</span><span class="v" style="color:var(--green)">Cosine / Dot product</span></div>
+            <div class="kv"><span class="k">VectorDB</span><span class="v" style="color:var(--green)">Qdrant · Weaviate · pgvector</span></div>
+            <div class="kv"><span class="k">Chunk size</span><span class="v" style="color:var(--green)">256–512 tokens · overlap 64</span></div>
+            <div class="kv"><span class="k">k retrieval</span><span class="v" style="color:var(--green)">5 à 20 passages</span></div>
+          </div>
+          <div class="card amber" style="margin-top:12px">
+            <h3>Limites du RAG classique</h3>
+            <div class="kv"><span class="k" style="color:var(--red)">×</span><span class="v amber">Recherche dense uniquement</span></div>
+            <div class="kv"><span class="k" style="color:var(--red)">×</span><span class="v amber">Pas de reformulation de query</span></div>
+            <div class="kv"><span class="k" style="color:var(--red)">×</span><span class="v amber">Sensible à la formulation</span></div>
+            <div class="kv"><span class="k" style="color:var(--red)">×</span><span class="v amber">Pas de reranking contextuel</span></div>
+            <div class="kv"><span class="k" style="color:var(--red)">×</span><span class="v amber">Sources uniques uniquement</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="rag-avance" class="tab-content">
+      <div class="card blue">
+        <h3>Pipeline RAG Avancé — Hybride + Reranking</h3>
+        <div class="diagram">
+<span class="node-d">QUERY</span>
+    <span class="arr">│</span>
+<span class="node-b">┌──────────────────────────────────────┐</span>
+<span class="node-b">│  QUERY REWRITING / EXPANSION         │</span>
+<span class="node-b">│  ▸ HyDE (hypothetical document)      │</span>
+<span class="node-b">│  ▸ Step-Back Prompting               │</span>
+<span class="node-b">│  ▸ Multi-Query (N variations)        │</span>
+<span class="node-b">└────────────────┬─────────────────────┘</span>
+                 <span class="arr">│ N queries parallèles</span>
+<span class="node-g">┌────────────────▼─────────────────────┐</span>
+<span class="node-g">│       HYBRID RETRIEVAL               │</span>
+<span class="node-g">│  ┌──────────────┬───────────────┐    │</span>
+<span class="node-g">│  │  DENSE       │  SPARSE       │    │</span>
+<span class="node-g">│  │  (embeddings)│  (BM25/TF-IDF)│    │</span>
+<span class="node-g">│  └──────┬───────┴──────┬────────┘    │</span>
+<span class="node-g">│         └──── RRF ─────┘            │</span>
+<span class="node-g">│      Reciprocal Rank Fusion          │</span>
+<span class="node-g">└────────────────┬─────────────────────┘</span>
+                 <span class="arr">│ scores fusionnés</span>
+<span class="node-p">┌────────────────▼─────────────────────┐</span>
+<span class="node-p">│  RERANKING                           │</span>
+<span class="node-p">│  CrossEncoder (ms-marco-MiniLM)      │</span>
+<span class="node-p">│  Cohere Rerank / JinaAI Reranker     │</span>
+<span class="node-p">└────────────────┬─────────────────────┘</span>
+                 <span class="arr">│ top-K reranké</span>
+<span class="node-a">┌────────────────▼─────────────────────┐</span>
+<span class="node-a">│  CONTEXT COMPRESSION                 │</span>
+<span class="node-a">│  LLMLingua · Selective Context       │</span>
+<span class="node-a">│  Réduction 70% tokens sans perte     │</span>
+<span class="node-a">└────────────────┬─────────────────────┘</span>
+                 <span class="arr">│</span>
+<span class="node-t">┌────────────────▼─────────────────────┐</span>
+<span class="node-t">│  LLM GENERATION + FAITHFULNESS CHECK │</span>
+<span class="node-t">│  RAGAS · TruLens · DeepEval          │</span>
+<span class="node-t">└──────────────────────────────────────┘</span>
+        </div>
+      </div>
+    </div>
+    <div id="rag-agentic" class="tab-content">
+      <div class="card purple">
+        <h3>Agentic RAG — Architecture complète 2026</h3>
+        <div class="diagram">
+<span class="node-d">QUERY COMPLEXE</span>
+         <span class="arr">│</span>
+<span class="node-p">┌─────────────────────────────────────────────────────┐</span>
+<span class="node-p">│                 PLANNER AGENT                        │</span>
+<span class="node-p">│  Décompose la query en sous-tâches                  │</span>
+<span class="node-p">│  Sélectionne les outils appropriés                  │</span>
+<span class="node-p">└──────────┬────────────┬────────────┬────────────────┘</span>
+           <span class="arr">│            │            │</span>
+           <span class="arr">▼            ▼            ▼</span>
+<span class="node-g">┌──────────┐  ┌──────────┐  ┌──────────────────────┐</span>
+<span class="node-g">│ RETRIEVER│  │WEB SEARCH│  │  SQL / CODE AGENT    │</span>
+<span class="node-g">│ RAG hybr.│  │Tavily API│  │  DB + Python exec    │</span>
+<span class="node-g">└────┬─────┘  └────┬─────┘  └──────────┬───────────┘</span>
+     <span class="arr">│               │                   │</span>
+     <span class="arr">└───────────────┴───────────────────┘</span>
+                         <span class="arr">│</span>
+<span class="node-b">                ┌────────▼────────┐</span>
+<span class="node-b">                │  SYNTHESIZER    │</span>
+<span class="node-b">                │  Fusionne les   │</span>
+<span class="node-b">                │  résultats      │</span>
+<span class="node-b">                └────────┬────────┘</span>
+                         <span class="arr">│</span>
+<span class="node-a">                ┌────────▼────────┐</span>
+<span class="node-a">                │  CRITIC AGENT   │  ─► INSUFFISANT → loop</span>
+<span class="node-a">                │  Évalue qualité │</span>
+<span class="node-a">                └────────┬────────┘</span>
+                         <span class="arr">│ SUFFISANT</span>
+                  <span class="node-d">RÉPONSE FINALE + SOURCES</span>
+        </div>
+      </div>
+      <div class="card amber" style="margin-top:12px">
+        <h3>Outils disponibles par agent</h3>
+        <div class="codeblock">
+<span class="c-green">vector_search</span>(query, k=10, filters={date, source, score})
+<span class="c-blue">web_search</span>(query, recency="7d", country="FR")
+<span class="c-purple">sql_query</span>(schema_context, natural_language_q)
+<span class="c-amber">code_exec</span>(python_snippet, timeout=30)
+<span class="c-coral">document_parser</span>(url, file_type=["pdf","docx","html"])
+<span class="c-teal">graph_query</span>(cypher_query, neo4j_endpoint)
+<span class="c-green">memory_store</span>(key, value, scope="session|long_term")
+        </div>
+      </div>
+    </div>
+    <div id="rag-compare" class="tab-content">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Critère</th><th>RAG Classique</th><th>RAG Avancé</th><th>Agentic RAG</th></tr>
+          <tr><td>Latence</td><td><span class="pill green">Faible ~200ms</span></td><td><span class="pill amber">Moyenne ~600ms</span></td><td><span class="pill red">Haute 2-15s</span></td></tr>
+          <tr><td>Précision factuelle</td><td>Bonne (0.72)</td><td>Très bonne (0.87)</td><td><span class="pill green">Excellente (0.94)</span></td></tr>
+          <tr><td>Multi-sources</td><td>❌</td><td>Partiel</td><td><span class="pill green">✅ Natif</span></td></tr>
+          <tr><td>Self-correction</td><td>❌</td><td>❌</td><td><span class="pill green">✅</span></td></tr>
+          <tr><td>Raisonnement</td><td>❌</td><td>Limité</td><td><span class="pill green">✅ Chain-of-thought</span></td></tr>
+          <tr><td>Coût / requête</td><td><span class="pill green">Bas (&lt;$0.01)</span></td><td><span class="pill amber">Moyen ($0.05)</span></td><td><span class="pill red">Élevé ($0.20+)</span></td></tr>
+          <tr><td>Cas d'usage idéal</td><td>FAQ, docs statiques</td><td>Recherche interne</td><td>Analyse complexe</td></tr>
+          <tr><td>Frameworks</td><td>LlamaIndex basic</td><td>LangChain / Haystack</td><td>LangGraph / CrewAI</td></tr>
+        </table>
+      </div>
+      <div class="alert info" style="margin-top:12px">
+        <span>ℹ</span><span>La métrique clé d'évaluation RAG est le <strong>RAGAS score</strong> : composite de Faithfulness (≥0.85), Answer Relevance (≥0.90) et Context Precision (≥0.80). Pour les systèmes agentiques, ajouter le <strong>Task Completion Rate</strong> comme KPI principal.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION AGENTS ═══ -->
+  <div id="s-agents" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Systèmes agentiques & Multi-agents<span class="tag amber">ADV 2026</span></div>
+      <div class="sec-subtitle">Architectures d'agents autonomes, patterns multi-agents, frameworks et boucles de raisonnement.</div>
+    </div>
+    <div class="grid2">
+      <div class="card amber">
+        <h3>Anatomie d'un agent IA</h3>
+        <div class="diagram">
+<span class="node-a">┌────────────────────────────────────────┐</span>
+<span class="node-a">│              AGENT CORE                │</span>
+<span class="node-a">│                                        │</span>
+<span class="node-g">│  ┌──────────┐  ┌─────────────────────┐ │</span>
+<span class="node-g">│  │  MEMORY  │  │   REASONING LOOP    │ │</span>
+<span class="node-g">│  │          │◄►│                     │ │</span>
+<span class="node-g">│  │ STM      │  │  Observe → Plan →   │ │</span>
+<span class="node-g">│  │ LTM      │  │  Act → Reflect      │ │</span>
+<span class="node-g">│  │ Episodic │  │  (ReAct / CoT / ToT)│ │</span>
+<span class="node-g">│  └──────────┘  └──────────┬──────────┘ │</span>
+<span class="node-b">│                           │            │</span>
+<span class="node-b">│  ┌────────────────────────▼──────────┐ │</span>
+<span class="node-b">│  │         TOOL EXECUTOR             │ │</span>
+<span class="node-b">│  │  [API][Code][Search][DB][Agent]   │ │</span>
+<span class="node-b">│  └───────────────────────────────────┘ │</span>
+<span class="node-a">└────────────────────────────────────────┘</span>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Mémoire multi-niveaux</h3>
+          <div class="kv"><span class="k">STM (Short-Term)</span><span class="v" style="color:var(--amber)">In-context window · Redis · 128K tokens</span></div>
+          <div class="kv"><span class="k">LTM (Long-Term)</span><span class="v" style="color:var(--amber)">VectorDB · embeddings · recherche ANN</span></div>
+          <div class="kv"><span class="k">Mémoire épisodique</span><span class="v" style="color:var(--amber)">Zep / Mem0 · timeline structurée</span></div>
+          <div class="kv"><span class="k">Mémoire sémantique</span><span class="v" style="color:var(--amber)">Knowledge Graph · Neo4j</span></div>
+          <div class="kv"><span class="k">Mémoire procédurale</span><span class="v" style="color:var(--amber)">Tool schemas · skill registry</span></div>
+        </div>
+        <div class="card teal" style="margin-top:12px">
+          <h3>Stratégies de raisonnement</h3>
+          <div class="kv"><span class="k">ReAct</span><span class="v teal">Reason + Act interleaved</span></div>
+          <div class="kv"><span class="k">CoT (Chain-of-Thought)</span><span class="v teal">Décomposition step-by-step</span></div>
+          <div class="kv"><span class="k">ToT (Tree-of-Thoughts)</span><span class="v teal">Exploration arborescente</span></div>
+          <div class="kv"><span class="k">Reflexion</span><span class="v teal">Auto-critique + retry</span></div>
+          <div class="kv"><span class="k">LATS (LLM MCTS)</span><span class="v teal">Monte Carlo Tree Search</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin:0 0 16px">
+      <h3>4 Patterns multi-agents</h3>
+      <div class="grid4">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:12px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--green);margin-bottom:8px">① Orchestrateur</div>
+          <div class="diagram" style="margin:0;padding:8px;font-size:.62rem">
+<span class="node-g">[ORCH.]</span>
+   <span class="arr">│</span>
+<span class="arr">┌──┼──┐</span>
+<span class="arr">▼  ▼  ▼</span>
+<span class="node-b">A1 A2 A3</span>
+          </div>
+          <div style="font-size:.62rem;color:var(--txt3);margin-top:6px">Agents spécialisés dirigés par un orchestrateur central</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:12px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--blue);margin-bottom:8px">② Pipeline</div>
+          <div class="diagram" style="margin:0;padding:8px;font-size:.62rem">
+<span class="node-b">[A1]</span><span class="arr">►</span><span class="node-b">[A2]</span><span class="arr">►</span><span class="node-b">[A3]</span>
+ <span class="node-d">Parse Analyze Write</span>
+          </div>
+          <div style="font-size:.62rem;color:var(--txt3);margin-top:6px">Traitement séquentiel, chaque agent enrichit la sortie</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:12px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--purple);margin-bottom:8px">③ Débat</div>
+          <div class="diagram" style="margin:0;padding:8px;font-size:.62rem">
+<span class="node-p">[R]</span><span class="arr">◄►</span><span class="node-p">[B]</span>
+  <span class="arr">└──►</span><span class="node-a">[J]</span>
+   <span class="node-d">Juge</span>
+          </div>
+          <div style="font-size:.62rem;color:var(--txt3);margin-top:6px">Agents adversariaux + arbitre pour décisions complexes</div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:12px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--coral);margin-bottom:8px">④ Swarm</div>
+          <div class="diagram" style="margin:0;padding:8px;font-size:.62rem">
+<span class="node-c">[A1]─[A2]</span>
+  <span class="arr">\ │ /</span>
+<span class="node-c">[A3]─[A4]</span>
+          </div>
+          <div style="font-size:.62rem;color:var(--txt3);margin-top:6px">Communication peer-to-peer, consensus émergent</div>
+        </div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Framework</th><th>Paradigme</th><th>Points forts</th><th>Usage principal</th><th>Maturité</th></tr>
+        <tr><td style="color:var(--green)">LangGraph</td><td>Graph stateful</td><td>Contrôle de flux précis, cycles, human-in-loop</td><td>Production enterprise</td><td><span class="pill green">Prod</span></td></tr>
+        <tr><td style="color:var(--blue)">AutoGen</td><td>Conversation agents</td><td>Multi-agent natif, code exec intégré</td><td>R&D, prototypage rapide</td><td><span class="pill green">Prod</span></td></tr>
+        <tr><td style="color:var(--purple)">CrewAI</td><td>Rôles & équipes</td><td>Intuitivité, personas, tasks structurés</td><td>PME / startups</td><td><span class="pill green">Prod</span></td></tr>
+        <tr><td style="color:var(--amber)">Smolagents</td><td>Code-first</td><td>Légèreté HuggingFace, on-prem facile</td><td>Déploiement local</td><td><span class="pill blue">Stable</span></td></tr>
+        <tr><td style="color:var(--coral)">OpenAgents</td><td>Outils réels</td><td>Intégration web/code/data natives</td><td>Automation recherche</td><td><span class="pill amber">Beta</span></td></tr>
+        <tr><td style="color:var(--teal)">CAMEL</td><td>Role-play dialogue</td><td>Simulation sociale, alignment research</td><td>Recherche académique</td><td><span class="pill amber">Research</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION STACK ═══ -->
+  <div id="s-stack" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Stack IA complète & Déploiement<span class="tag teal">ADV 2026</span></div>
+      <div class="sec-subtitle">Architecture tiered hybride cloud/edge/on-prem, moteurs d'inférence, orchestration K8s et patterns de déploiement production.</div>
+    </div>
+    <div class="card teal">
+      <h3>Stack IA Production 2026 — Vue en couches</h3>
+      <div class="diagram">
+<span class="node-d">┌────────────────────────────────────────────────────────────────┐</span>
+<span class="node-d">│                    COUCHE APPLICATION                          │</span>
+<span class="node-d">│        [Chat UI]  [API REST]  [SDK Python]  [Webhooks]         │</span>
+<span class="node-d">├────────────────────────────────────────────────────────────────┤</span>
+<span class="node-b">│                  COUCHE ORCHESTRATION                          │</span>
+<span class="node-b">│   [LangGraph]  [LlamaIndex]  [Haystack]  [Custom Agent Loop]   │</span>
+<span class="node-b">├───────────────────────────┬────────────────────────────────────┤</span>
+<span class="node-g">│     COUCHE LLM            │         COUCHE RAG                 │</span>
+<span class="node-g">│  GPT-4o · Claude 3.7      │  Embed · VectorDB · Rerank         │</span>
+<span class="node-g">│  Llama 3.3 · Mistral      │  Qdrant · Weaviate · pgvector      │</span>
+<span class="node-g">├───────────────────────────┼────────────────────────────────────┤</span>
+<span class="node-a">│     COUCHE DONNÉES        │     COUCHE MÉMOIRE                 │</span>
+<span class="node-a">│  PostgreSQL · MongoDB     │  Redis (STM) · Zep · Mem0          │</span>
+<span class="node-a">│  S3/MinIO · Data Lake     │  Neo4j (Knowledge Graph)           │</span>
+<span class="node-a">├───────────────────────────┴────────────────────────────────────┤</span>
+<span class="node-p">│                   COUCHE OBSERVABILITÉ                         │</span>
+<span class="node-p">│   LangSmith · Arize Phoenix · TruLens · Prometheus · Grafana   │</span>
+<span class="node-p">├────────────────────────────────────────────────────────────────┤</span>
+<span class="node-t">│                   COUCHE INFRASTRUCTURE                        │</span>
+<span class="node-t">│   Kubernetes · Ray Serve · Triton Inference · vLLM · BentoML   │</span>
+<span class="node-t">│   GPU: A100/H100/H200 · NVLink · InfiniBand 400Gb/s            │</span>
+<span class="node-d">└────────────────────────────────────────────────────────────────┘</span>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="card green">
+        <h3>Pattern Cloud-First</h3>
+        <div class="diagram" style="font-size:.62rem">
+<span class="node-d">[Users]</span><span class="arr">→</span><span class="node-b">[CDN/WAF]</span>
+           <span class="arr">│</span>
+     <span class="node-g">[API Gateway]</span>
+      <span class="arr">│    │    │</span>
+<span class="node-b">[LLM] [Vec] [Ag.]</span>
+        </div>
+        <div class="kv"><span class="k">Latence</span><span class="v" style="color:var(--green)">~200ms</span></div>
+        <div class="kv"><span class="k">Scalabilité</span><span class="v" style="color:var(--green)">Illimitée</span></div>
+        <div class="kv"><span class="k">Coût</span><span class="v amber">Pay-as-you-go</span></div>
+      </div>
+      <div class="card purple">
+        <h3>Pattern On-Premise</h3>
+        <div class="diagram" style="font-size:.62rem">
+<span class="node-d">[Users]</span><span class="arr">→</span><span class="node-p">[LB]</span>
+           <span class="arr">│</span>
+    <span class="node-p">[vLLM Server]</span>
+    <span class="node-p">[Llama 3.3]</span>
+  <span class="arr">┌───┼────┐</span>
+<span class="node-b">[pg][Redis][S3]</span>
+        </div>
+        <div class="kv"><span class="k">Confidentialité</span><span class="v" style="color:var(--green)">Maximale</span></div>
+        <div class="kv"><span class="k">Latence</span><span class="v" style="color:var(--green)">&lt;100ms LAN</span></div>
+        <div class="kv"><span class="k">CapEx</span><span class="v coral">Élevé GPU</span></div>
+      </div>
+      <div class="card amber">
+        <h3>Pattern Hybride Tiered ★</h3>
+        <div class="diagram" style="font-size:.62rem">
+<span class="node-t">EDGE &lt;50ms</span>
+<span class="node-t">[SLM+Cache]</span>
+  <span class="arr">│ complexe</span>
+<span class="node-b">CLOUD ~200ms</span>
+<span class="node-b">[LLM API+RAG]</span>
+  <span class="arr">│ sensible</span>
+<span class="node-p">ON-PREM</span>
+<span class="node-p">[LLM privé]</span>
+        </div>
+        <div class="kv"><span class="k">Best of</span><span class="v" style="color:var(--amber)">Performance + sécurité</span></div>
+        <div class="kv"><span class="k">Routing</span><span class="v amber">Data classification</span></div>
+        <div class="kv"><span class="k">Coût</span><span class="v" style="color:var(--green)">Optimisé</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Moteurs d'inférence — Comparatif exhaustif 2026</h3>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Moteur</th><th>Throughput</th><th>Latence</th><th>Mécanisme clé</th><th>Spécificité</th><th>GPU target</th></tr>
+          <tr><td style="color:var(--green)">vLLM</td><td><span class="pill green">★★★★★</span></td><td>Moyenne</td><td>PagedAttention + continuous batching</td><td>Production standard</td><td>A100/H100</td></tr>
+          <tr><td style="color:var(--blue)">SGLang</td><td><span class="pill green">★★★★★</span></td><td>Très bonne</td><td>RadixAttention + KV-cache sharing</td><td>Structured gen. + agents</td><td>A100/H100</td></tr>
+          <tr><td style="color:var(--purple)">Triton Inference</td><td><span class="pill green">★★★★★</span></td><td>Très bonne</td><td>Custom CUDA kernels + TensorRT</td><td>NVIDIA natif, perf max</td><td>H100/H200</td></tr>
+          <tr><td style="color:var(--amber)">TGI (HuggingFace)</td><td><span class="pill blue">★★★★</span></td><td>Bonne</td><td>Flash Attention + tensor parallel</td><td>Écosystème HF complet</td><td>A100/H100</td></tr>
+          <tr><td style="color:var(--teal)">llama.cpp</td><td><span class="pill amber">★★★</span></td><td>Excellente</td><td>GGUF quantization GGML</td><td>CPU / Apple Silicon / edge</td><td>CPU/MPS</td></tr>
+          <tr><td style="color:var(--coral)">MLC-LLM</td><td><span class="pill blue">★★★★</span></td><td>Excellente</td><td>TVM compilation + WebGPU</td><td>Mobile / browser / WASM</td><td>Mobile GPU</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION GOVERNANCE ═══ -->
+  <div id="s-governance" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Gouvernance & Observabilité IA<span class="tag coral">CRITIQUE</span></div>
+      <div class="sec-subtitle">Monitoring, guardrails, conformité réglementaire, métriques de qualité et frameworks de gouvernance pour systèmes IA production.</div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-val" style="color:var(--green)">&lt;200ms</div><div class="kpi-label">TTFT cible</div><div class="kpi-delta" style="color:var(--green)">Time To First Token</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--green)">&lt;3%</div><div class="kpi-label">Hallucination</div><div class="kpi-delta" style="color:var(--green)">Taux cible production</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--blue)">&gt;0.85</div><div class="kpi-label">Faithfulness</div><div class="kpi-delta" style="color:var(--blue)">Score RAGAS</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--blue)">&gt;0.90</div><div class="kpi-label">Relevance</div><div class="kpi-delta" style="color:var(--blue)">Answer Relevance</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--coral)">0%</div><div class="kpi-label">PII Leakage</div><div class="kpi-delta" style="color:var(--coral)">Tolérance zéro</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--coral)">0%</div><div class="kpi-label">Prompt Injection</div><div class="kpi-delta" style="color:var(--coral)">Tolérance zéro</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card coral">
+        <h3>Framework Gouvernance — 4 piliers</h3>
+        <div class="codeblock">
+<span class="c-coral">PILIER 1 — CONTRÔLE D'ACCÈS</span>
+  ├── RBAC / ABAC sur les agents et tools
+  ├── Audit trail complet (qui, quoi, quand)
+  └── Rate limiting par user / team / dept
+
+<span class="c-amber">PILIER 2 — GARDE-FOUS (GUARDRAILS)</span>
+  ├── Input validation (injection, jailbreak)
+  ├── Output filtering (PII, contenu sensible)
+  └── NeMo Guardrails + Llama Guard 3
+
+<span class="c-blue">PILIER 3 — CONFORMITÉ</span>
+  ├── RGPD : droit à l'oubli vectoriel
+  ├── AI Act EU : classification risques
+  └── SOC2 / ISO 27001 / DORA (banque)
+
+<span class="c-green">PILIER 4 — EXPLICABILITÉ</span>
+  ├── Source attribution (citations RAG)
+  ├── Chain-of-thought logging complet
+  └── Human-in-the-loop décisions crit.
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Stack d'observabilité complète</h3>
+          <div class="kv"><span class="k">Traces LLM</span><span class="v" style="color:var(--teal)">LangSmith · Langfuse · Arize Phoenix</span></div>
+          <div class="kv"><span class="k">Métriques infra</span><span class="v" style="color:var(--teal)">Prometheus + Grafana</span></div>
+          <div class="kv"><span class="k">Évaluation qualité</span><span class="v" style="color:var(--teal)">RAGAS · DeepEval · TruLens</span></div>
+          <div class="kv"><span class="k">Logs centralisés</span><span class="v" style="color:var(--teal)">ELK Stack · Loki</span></div>
+          <div class="kv"><span class="k">Alertes</span><span class="v" style="color:var(--teal)">PagerDuty · Opsgenie</span></div>
+          <div class="kv"><span class="k">Coûts FinOps</span><span class="v" style="color:var(--teal)">OpenMeter · Infracost</span></div>
+        </div>
+        <div class="card amber" style="margin-top:12px">
+          <h3>Guardrails — Types de protection</h3>
+          <div class="kv"><span class="k">Prompt injection</span><span class="v amber">Détection par classifier fine-tuné</span></div>
+          <div class="kv"><span class="k">Jailbreak</span><span class="v amber">Llama Guard 3 + règles NeMo</span></div>
+          <div class="kv"><span class="k">PII detection</span><span class="v amber">Presidio (Microsoft) · regex + ML</span></div>
+          <div class="kv"><span class="k">Hallucination</span><span class="v amber">Faithfulness check post-gen.</span></div>
+          <div class="kv"><span class="k">Toxicité</span><span class="v amber">Perspective API · custom model</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Métrique</th><th>Catégorie</th><th>Outil de mesure</th><th>Cible 2026</th><th>Seuil alerte</th></tr>
+        <tr><td>TTFT</td><td>Performance</td><td>Prometheus custom</td><td>&lt; 200ms</td><td>&gt; 1s</td></tr>
+        <tr><td>Throughput</td><td>Performance</td><td>vLLM metrics</td><td>&gt; 1000 tok/s</td><td>&lt; 200 tok/s</td></tr>
+        <tr><td>Faithfulness</td><td>Qualité RAG</td><td>RAGAS</td><td>&gt; 0.85</td><td>&lt; 0.70</td></tr>
+        <tr><td>Answer Relevance</td><td>Qualité RAG</td><td>RAGAS</td><td>&gt; 0.90</td><td>&lt; 0.75</td></tr>
+        <tr><td>Hallucination Rate</td><td>Qualité LLM</td><td>TruLens + NLI model</td><td>&lt; 3%</td><td>&gt; 8%</td></tr>
+        <tr><td>Context Precision</td><td>Qualité RAG</td><td>RAGAS</td><td>&gt; 0.80</td><td>&lt; 0.60</td></tr>
+        <tr><td>Task Completion</td><td>Qualité Agent</td><td>Custom eval</td><td>&gt; 92%</td><td>&lt; 80%</td></tr>
+        <tr><td>Prompt Injection Rate</td><td>Sécurité</td><td>Guardrail logs</td><td>0%</td><td>&gt; 0%</td></tr>
+        <tr><td>PII Leakage</td><td>Sécurité</td><td>Presidio output scan</td><td>0%</td><td>&gt; 0%</td></tr>
+        <tr><td>Cost per 1K tokens</td><td>FinOps</td><td>OpenMeter</td><td>Optimisé</td><td>+30% baseline</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION TRENDS ═══ -->
+  <div id="s-trends" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Tendances & Architecture cible 2026+<span class="tag green">NEW</span></div>
+      <div class="sec-subtitle">Paradigmes émergents, innovations frontier et architecture IA cible synthétisant l'ensemble des piliers.</div>
+    </div>
+    <div class="grid3">
+      <div class="card green">
+        <h3 style="color:var(--green)">Test-Time Compute ★</h3>
+        <div class="kv"><span class="k">Maturité</span><span class="v" style="color:var(--green)">✅ Production 2025</span></div>
+        <div class="kv"><span class="k">Principe</span><span class="v" style="color:var(--green)">More compute = better reasoning</span></div>
+        <div class="kv"><span class="k">Mécanisme</span><span class="v" style="color:var(--green)">RL loops + self-reflection</span></div>
+        <div class="kv"><span class="k">Exemples</span><span class="v" style="color:var(--green)">o3, o4-mini, R1, R2</span></div>
+      </div>
+      <div class="card blue">
+        <h3 style="color:var(--blue)">Memory-Augmented LLM</h3>
+        <div class="kv"><span class="k">Maturité</span><span class="v blue">🔄 Scaling</span></div>
+        <div class="kv"><span class="k">Principe</span><span class="v blue">Mémoire épisodique longue</span></div>
+        <div class="kv"><span class="k">Mécanisme</span><span class="v blue">Mem0 + VectorDB + KG</span></div>
+        <div class="kv"><span class="k">Horizon</span><span class="v blue">Production fin 2026</span></div>
+      </div>
+      <div class="card purple">
+        <h3 style="color:var(--purple)">Agent OS / LLM OS</h3>
+        <div class="kv"><span class="k">Maturité</span><span class="v purple">🔬 R&D émergent</span></div>
+        <div class="kv"><span class="k">Principe</span><span class="v purple">LLM = noyau d'orchestration</span></div>
+        <div class="kv"><span class="k">Mécanisme</span><span class="v purple">Persistance + planification</span></div>
+        <div class="kv"><span class="k">Horizon</span><span class="v purple">2027+</span></div>
+      </div>
+      <div class="card amber">
+        <h3 style="color:var(--amber)">World Models</h3>
+        <div class="kv"><span class="k">Maturité</span><span class="v amber">🔬 Recherche</span></div>
+        <div class="kv"><span class="k">Principe</span><span class="v amber">Simulation du monde réel</span></div>
+        <div class="kv"><span class="k">Exemples</span><span class="v amber">Genie 2, SORA-like</span></div>
+        <div class="kv"><span class="k">Horizon</span><span class="v amber">Incertain</span></div>
+      </div>
+      <div class="card coral">
+        <h3 style="color:var(--coral)">Embodied AI</h3>
+        <div class="kv"><span class="k">Maturité</span><span class="v coral">🔄 Pilotes</span></div>
+        <div class="kv"><span class="k">Principe</span><span class="v coral">Robots + LLM + perception</span></div>
+        <div class="kv"><span class="k">Exemples</span><span class="v coral">Figure 02, Optimus</span></div>
+        <div class="kv"><span class="k">Horizon</span><span class="v coral">2026-2028</span></div>
+      </div>
+      <div class="card teal">
+        <h3 style="color:var(--teal)">1-bit LLM / Ultra-sparse</h3>
+        <div class="kv"><span class="k">Maturité</span><span class="v teal">🔬 R&D avancée</span></div>
+        <div class="kv"><span class="k">Principe</span><span class="v teal">Poids ∈ {-1, 0, +1}</span></div>
+        <div class="kv"><span class="k">Résultat</span><span class="v teal">×10 moins de RAM</span></div>
+        <div class="kv"><span class="k">Horizon</span><span class="v teal">Edge production 2026</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:4px">
+      <h3>Architecture IA cible synthétique 2026</h3>
+      <div class="diagram">
+<span class="node-d">╔══════════════════════════════════════════════════════════════════╗</span>
+<span class="node-d">║              ARCHITECTURE IA CIBLE 2026                         ║</span>
+<span class="node-d">╠══════════════════════════════════════════════════════════════════╣</span>
+<span class="node-b">║  ┌──────────────────────────────────────────────────────────┐  ║</span>
+<span class="node-b">║  │          AGENT ORCHESTRATION LAYER                       │  ║</span>
+<span class="node-b">║  │  Planning · Routing intelligent · Tool-calling · Memory  │  ║</span>
+<span class="node-b">║  └──────────────────────┬───────────────────────────────────┘  ║</span>
+<span class="node-b">║                         │                                       ║</span>
+<span class="node-b">║       ┌─────────────────┼─────────────────┐                    ║</span>
+<span class="node-b">║       ▼                 ▼                 ▼                    ║</span>
+<span class="node-g">║  ┌──────────┐   ┌──────────────┐  ┌──────────────┐            ║</span>
+<span class="node-g">║  │ MoE LLM  │   │ Agentic RAG  │  │ Hybrid RAG   │            ║</span>
+<span class="node-g">║  │ (sparse  │   │ (tools +     │  │ (dense +     │            ║</span>
+<span class="node-g">║  │ routing) │   │  critique)   │  │  sparse +    │            ║</span>
+<span class="node-g">║  │ Test-Time│   │  loop)       │  │  graph)      │            ║</span>
+<span class="node-g">║  └──────────┘   └──────────────┘  └──────────────┘            ║</span>
+<span class="node-b">║       └─────────────────┴─────────────────┘                    ║</span>
+<span class="node-b">║                         │                                       ║</span>
+<span class="node-a">║  ┌──────────────────────▼───────────────────────────────────┐  ║</span>
+<span class="node-a">║  │                 MEMORY FABRIC                            │  ║</span>
+<span class="node-a">║  │  STM (Redis) │ LTM (VectorDB) │ Episodic (Zep) │ KGraph  │  ║</span>
+<span class="node-a">║  └──────────────────────┬───────────────────────────────────┘  ║</span>
+<span class="node-a">║                         │                                       ║</span>
+<span class="node-p">║  ┌──────────────────────▼───────────────────────────────────┐  ║</span>
+<span class="node-p">║  │         OBSERVABILITÉ + GOUVERNANCE + GUARDRAILS         │  ║</span>
+<span class="node-p">║  │  Traces │ Métriques │ Guardrails │ Audit │ Conformité    │  ║</span>
+<span class="node-p">║  └──────────────────────────────────────────────────────────┘  ║</span>
+<span class="node-d">╚══════════════════════════════════════════════════════════════════╝</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION BANKING ═══ -->
+  <div id="s-banking" class="section">
+    <div class="sec-header">
+      <div class="sec-title"><span class="icon">◈</span>Stack IA Hybride — Institution Bancaire<span class="tag coral">LIVE</span></div>
+      <div class="sec-subtitle">Architecture de référence pour une banque : sécurité maximale, conformité RGPD · DORA · Bâle III · AI Act EU. Cliquez sur chaque composant pour les détails techniques.</div>
+    </div>
+    <div class="alert warn">
+      <span>⚠</span><span>Règle critique : les données PII, KYC, AML ne quittent jamais le périmètre on-prem. Le routing est piloté par l'API Gateway qui classifie chaque requête selon la sensibilité des données avant de la diriger vers le bon tier.</span>
+    </div>
+
+    <div class="tier-stack">
+      <!-- UTILISATEURS -->
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:2px">
+        <div class="tnode t-obs" style="flex:1;max-width:220px" onclick="showDetail('canal-web')">
+          <div class="tn-label" style="color:var(--teal)">🖥 Web Banking</div>
+          <div class="tn-sub">Clients particuliers &amp; pros</div>
+        </div>
+        <div class="tnode t-obs" style="flex:1;max-width:220px" onclick="showDetail('canal-mobile')">
+          <div class="tn-label" style="color:var(--teal)">📱 Mobile App</div>
+          <div class="tn-sub">iOS &amp; Android · FIDO2</div>
+        </div>
+        <div class="tnode t-obs" style="flex:1;max-width:220px" onclick="showDetail('canal-conseiller')">
+          <div class="tn-label" style="color:var(--teal)">👤 Conseiller</div>
+          <div class="tn-sub">Chargés de clientèle · IA</div>
+        </div>
+      </div>
+      <div class="flow-arrow">▼</div>
+
+      <!-- EDGE -->
+      <div class="tier t-edge">
+        <div class="tier-head">⬡ EDGE <span class="tag green">Tier 1</span> <span class="desc">Agences &amp; Mobile · latence &lt; 50ms · hors ligne partiel</span></div>
+        <div class="tier-row">
+          <div class="tnode t-edge" onclick="showDetail('slm-local')">
+            <div class="tn-label">SLM Local</div>
+            <div class="tn-sub">Phi-4 mini · INT4 · ~2GB RAM</div>
+          </div>
+          <div class="tnode t-edge" onclick="showDetail('cache-redis')">
+            <div class="tn-label">Cache Sémantique</div>
+            <div class="tn-sub">Redis · similarity ≥ 0.92</div>
+          </div>
+          <div class="tnode t-edge" onclick="showDetail('auth-fido2')">
+            <div class="tn-label">Auth FIDO2</div>
+            <div class="tn-sub">MFA · biométrie · PSD2 SCA</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">▼</div>
+
+      <!-- SÉCURITÉ -->
+      <div class="tier t-sec">
+        <div class="tier-head">🛡 SÉCURITÉ <span class="tag amber">Tier 2</span> <span class="desc">Périmètre Zero Trust · DMZ · classification des données</span></div>
+        <div class="tier-row">
+          <div class="tnode t-sec" onclick="showDetail('waf')">
+            <div class="tn-label">WAF / Anti-DDoS</div>
+            <div class="tn-sub">Cloudflare · F5 · L7 protection</div>
+          </div>
+          <div class="tnode t-sec" onclick="showDetail('api-gateway')">
+            <div class="tn-label">API Gateway</div>
+            <div class="tn-sub">Kong · data classifier · JWT</div>
+          </div>
+          <div class="tnode t-sec" onclick="showDetail('iam')">
+            <div class="tn-label">IAM / SSO</div>
+            <div class="tn-sub">Okta · RBAC · least privilege</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">▼</div>
+
+      <!-- CLOUD -->
+      <div class="tier t-cloud">
+        <div class="tier-head">☁ CLOUD <span class="tag blue">Tier 3</span> <span class="desc">Traitement IA avancé · données anonymisées uniquement · ~200ms</span></div>
+        <div class="tier-row">
+          <div class="tnode t-cloud" onclick="showDetail('llm-api')">
+            <div class="tn-label">LLM API</div>
+            <div class="tn-sub">Azure OpenAI EU · GPT-4o</div>
+          </div>
+          <div class="tnode t-cloud" onclick="showDetail('rag-hybride')">
+            <div class="tn-label">RAG Hybride</div>
+            <div class="tn-sub">Dense + BM25 + Cohere rerank</div>
+          </div>
+          <div class="tnode t-cloud" onclick="showDetail('orchestrateur')">
+            <div class="tn-label">Orchestrateur</div>
+            <div class="tn-sub">LangGraph · multi-agents</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">⇕ <span style="font-size:.62rem;color:var(--txt3)">flux bidirectionnel · TLS 1.3 · mTLS · données anonymisées</span></div>
+
+      <!-- ON-PREM -->
+      <div class="tier t-onprem">
+        <div class="tier-head">🔒 ON-PREM <span class="tag purple">Tier 4</span> <span class="desc">Données sensibles · Air-gapped · HSM · PII · KYC · Core Banking</span></div>
+        <div class="tier-row">
+          <div class="tnode t-onprem" onclick="showDetail('llm-prive')">
+            <div class="tn-label">LLM Privé</div>
+            <div class="tn-sub">Llama 3.3 70B · vLLM · A100</div>
+          </div>
+          <div class="tnode t-onprem" onclick="showDetail('vectordb-prem')">
+            <div class="tn-label">VectorDB Qdrant</div>
+            <div class="tn-sub">Docs confidentiels · AES-256</div>
+          </div>
+          <div class="tnode t-onprem" onclick="showDetail('core-banking')">
+            <div class="tn-label">Core Banking</div>
+            <div class="tn-sub">FLEXCUBE · Temenos · CBS</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">▼</div>
+
+      <!-- GOUVERNANCE -->
+      <div class="tier t-gov">
+        <div class="tier-head">⚖ GOUVERNANCE <span class="tag coral">Transversal</span> <span class="desc">RGPD · DORA · Bâle III · AI Act EU · NIS2</span></div>
+        <div class="tier-row">
+          <div class="tnode t-gov" onclick="showDetail('guardrails')">
+            <div class="tn-label">Guardrails</div>
+            <div class="tn-sub">NeMo + Llama Guard 3</div>
+          </div>
+          <div class="tnode t-gov" onclick="showDetail('audit-trail')">
+            <div class="tn-label">Audit Trail</div>
+            <div class="tn-sub">DORA · RGPD · 7 ans · immuable</div>
+          </div>
+          <div class="tnode t-gov" onclick="showDetail('explainability')">
+            <div class="tn-label">Explainabilité</div>
+            <div class="tn-sub">SHAP · citations · AI Act EU</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">▼</div>
+
+      <!-- OBSERVABILITÉ -->
+      <div class="tier t-obs">
+        <div class="tier-head">📊 OBSERVABILITÉ <span class="tag green">24/7</span> <span class="desc">Monitoring · SLA 99.9% · alertes · SIEM · FinOps</span></div>
+        <div class="tier-row">
+          <div class="tnode t-obs" onclick="showDetail('langsmith')">
+            <div class="tn-label">LangSmith</div>
+            <div class="tn-sub">Traces · RAGAS · évaluations</div>
+          </div>
+          <div class="tnode t-obs" onclick="showDetail('prometheus')">
+            <div class="tn-label">Prometheus</div>
+            <div class="tn-sub">Métriques · Grafana · alertes</div>
+          </div>
+          <div class="tnode t-obs" onclick="showDetail('siem')">
+            <div class="tn-label">SIEM Splunk</div>
+            <div class="tn-sub">Incidents sécurité · SOC 24/7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL PANEL -->
+    <div id="detail-panel">
+      <div class="dp-title" id="dp-title">Sélectionnez un composant</div>
+      <div id="dp-body"></div>
+    </div>
+
+    <!-- ROUTING TABLE -->
+    <div class="card" style="margin-top:16px">
+      <h3>Matrice de routing des données — Règles critiques</h3>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Type de donnée</th><th>Tier autorisé</th><th>Justification réglementaire</th><th>Chiffrement</th></tr>
+          <tr><td>FAQ / Guide produit</td><td><span class="pill green">EDGE + CLOUD</span></td><td>Données publiques, pas de PII</td><td>TLS 1.3</td></tr>
+          <tr><td>Requête générale anonymisée</td><td><span class="pill blue">CLOUD</span></td><td>Performance optimale, pas de données perso</td><td>TLS 1.3</td></tr>
+          <tr><td>Profil client (prénom, email)</td><td><span class="pill red">ON-PREM uniquement</span></td><td>RGPD Art.4 — données à caractère personnel</td><td>AES-256 + HSM</td></tr>
+          <tr><td>KYC / Documents identité</td><td><span class="pill red">ON-PREM uniquement</span></td><td>LCB-FT, conformité bancaire stricte</td><td>AES-256 + HSM</td></tr>
+          <tr><td>Transactions financières</td><td><span class="pill red">ON-PREM uniquement</span></td><td>PSD2, Bâle III, secret bancaire</td><td>AES-256 + HSM</td></tr>
+          <tr><td>Scoring crédit</td><td><span class="pill red">ON-PREM + Guardrails</span></td><td>AI Act EU — système à haut risque Art.10</td><td>AES-256</td></tr>
+          <tr><td>Analyse AML / fraude</td><td><span class="pill red">ON-PREM uniquement</span></td><td>TRACFIN, LCB-FT</td><td>AES-256 + audit</td></tr>
+          <tr><td>Contrats d'analyse (anonymisés)</td><td><span class="pill blue">CLOUD (anonymisé)</span></td><td>Après pseudonymisation RGPD Art.89</td><td>TLS 1.3</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #main -->
+</div><!-- #app -->
+
+<script>
+// NAV
+var sections={overview:'Vue d\'ensemble',transformers:'Transformers',moe:'Mixture of Experts',rag:'RAG — 3 niveaux',agents:'Systèmes agentiques',stack:'Stack IA complète',governance:'Gouvernance & Obs.',trends:'Tendances 2026+',banking:'Stack Bancaire'};
+function show(id){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  var s=document.getElementById('s-'+id);
+  if(s)s.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active')});
+  document.getElementById('breadcrumb-txt').textContent=sections[id]||id;
+  window.scrollTo(0,0);
+}
+
+// TABS
+function switchTab(group,id){
+  var container=document.getElementById('s-'+group);
+  container.querySelectorAll('.tab').forEach(function(t,i){
+    t.classList.remove('active');
+    var contents=container.querySelectorAll('.tab-content');
+    if(contents[i])contents[i].classList.remove('active');
+  });
+  var tabs=container.querySelectorAll('.tab');
+  var contents=container.querySelectorAll('.tab-content');
+  tabs.forEach(function(t,i){
+    if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+id+"'")){
+      t.classList.add('active');
+      if(contents[i])contents[i].classList.add('active');
+    }
+  });
+}
+
+// BANKING DETAIL
+var details={
+  'canal-web':{title:'Canal Web Banking',body:'Portail bancaire sécurisé HTTPS/TLS 1.3. SPA React avec authentification SSO OAuth 2.0. Content-Security-Policy stricte. Session timeout 15min. Logs de connexion complets pour audit DORA.'},
+  'canal-mobile':{title:'Canal Mobile App',body:'Application iOS/Android avec biométrie FIDO2 (Face ID, empreinte). Certificat pinning contre MITM. Chiffrement local des données en attente (Keychain iOS / Keystore Android). Mode hors-ligne partiel via SLM.'},
+  'canal-conseiller':{title:'Canal Conseiller Bancaire',body:'Poste de travail sécurisé en agence. Accès aux outils IA d\'aide à la décision : résumés clients, analyse de risque, suggestions produits conformes MiFID II. Interface web interne avec RBAC par rôle.'},
+  'slm-local':{title:'SLM Local — Phi-4 mini',body:'Modèle léger (~3.8B paramètres) déployé en agence ou sur device. Quantization INT4 GGUF, ~2GB RAM. Répond aux requêtes simples sans connexion cloud (FAQ, aide formulaires). Latence < 50ms sur CPU Intel i7+. Mise à jour mensuelle via pipeline MDM.'},
+  'cache-redis':{title:'Cache Sémantique Redis',body:'Stockage des embeddings des paires Q/R fréquentes. Seuil de similarité cosine = 0.92 (configurable). Réduit les appels LLM de 40-60% en production. TTL de 24h pour les données dynamiques, 30 jours pour les FAQ statiques. Cluster Redis 3 nœuds pour HA.'},
+  'auth-fido2':{title:'Authentification FIDO2',body:'Authentification sans mot de passe via WebAuthn (FIDO2). Clé matérielle YubiKey ou biométrie device. MFA obligatoire conforme PSD2 SCA (Strong Customer Authentication). Résistant au phishing car clé liée au domaine. Logs d\'authentification archivés 5 ans.'},
+  'waf':{title:'WAF + Anti-DDoS',body:'Web Application Firewall (Cloudflare Enterprise ou F5 Advanced WAF). Protection contre : injections SQL, XSS, CSRF, path traversal, attaques L7 DDoS. Module spécifique : détection des prompt injections sur les API IA (patterns regex + classifier ML). Rate limiting par IP : 100 req/min standard, 10 req/min routes IA sensibles.'},
+  'api-gateway':{title:'API Gateway — Routeur intelligent',body:'Kong Gateway avec plugin de data classification. Analyse chaque requête et header pour identifier si des données PII sont présentes. Route vers CLOUD (anonymisé) ou ON-PREM (données sensibles). JWT validation, OAuth 2.0 PKCE, rate limiting par profil utilisateur. Circuit breaker Hystrix pattern.'},
+  'iam':{title:'IAM / SSO — Gestion des identités',body:'Okta ou Ping Identity. SSO SAML 2.0 / OpenID Connect. RBAC granulaire par rôle bancaire : Teller (lecture comptes), Advisor (+ produits), Manager (+ validations), Compliance (+ audit trail). Least privilege enforced. Revue des accès trimestrielle automatisée. MFA obligatoire pour tous les rôles.'},
+  'llm-api':{title:'LLM API Cloud — Azure OpenAI',body:'Azure OpenAI Service dans région Europe (France Central ou West Europe) pour conformité RGPD. Modèles : GPT-4o pour raisonnement complexe, GPT-4o-mini pour tâches simples. SLA 99.9% Microsoft. Seules données anonymisées ou pseudonymisées envoyées. Pas de fine-tuning sur données clients. Accord DPA (Data Processing Agreement) en place.'},
+  'rag-hybride':{title:'RAG Hybride Cloud',body:'Retrieval Augmented Generation sur documents réglementaires, FAQ, politiques internes. Pipeline : BGE-M3 embeddings (dense) + BM25 (sparse) → Reciprocal Rank Fusion → Cohere Reranker → LLMLingua compression. Sources : Textes réglementaires BCB, directives internes, produits bancaires. Mise à jour quotidienne du corpus.'},
+  'orchestrateur':{title:'Orchestrateur LangGraph',body:'Graphe d\'agents LangGraph avec mémoire d\'état persistante. Agents spécialisés : ResearchAgent (RAG), ComplianceAgent (vérification conformité MiFID II), SynthesisAgent (réponse finale), CriticAgent (validation qualité). Loop de raisonnement avec auto-correction si score faithfulness < 0.80. Timeout 15s max par requête.'},
+  'llm-prive':{title:'LLM Privé On-Premise',body:'Llama 3.3 70B Instruct, quantization Q8, déployé via vLLM sur 2× NVIDIA A100 80GB en NVLink. Réseau isolé (air-gapped), aucune connexion internet. Traite uniquement les requêtes impliquant données PII, KYC, AML, transactions. Throughput : ~200 tokens/s. TTFT ~300ms. Sauvegardes chiffrées HSM quotidiennes.'},
+  'vectordb-prem':{title:'VectorDB Qdrant On-Premise',body:'Qdrant cluster 3 nœuds on-prem. Index HNSW sur corpus documents confidentiels : contrats clients, rapports AML, dossiers KYC, notes de crédit. Chiffrement AES-256 au repos. Accès via JWT interne uniquement (pas d\'accès réseau externe). Snapshots quotidiens vers MinIO chiffré. Capacité : 50M vecteurs 1536d.'},
+  'core-banking':{title:'Core Banking System (CBS)',body:'Oracle FLEXCUBE ou Temenos T24. API REST interne (non exposée à l\'IA cloud) pour consultation : soldes, historique transactions, données KYC, scoring crédit. Accès en lecture seule depuis les agents IA. Toute écriture passe par validation humaine obligatoire (HITL). Logs de chaque consultation archivés DORA Art.11.'},
+  'guardrails':{title:'Guardrails IA Bancaire',body:'NeMo Guardrails : règles comportementales configurables (ex: ne jamais conseiller de déplacer des fonds sans vérification). Llama Guard 3 : classificateur de sécurité fine-tuné sur cas bancaires. Protections : prompt injection, jailbreak, conseils non conformes MiFID II, contenu financier risqué. Taux de blocage loggué et auditable. Latence ajoutée : ~30ms.'},
+  'audit-trail':{title:'Audit Trail Immuable',body:'Chaque requête IA horodatée (RFC 3339), signée numériquement (RSA-2048), stockée dans une base append-only (PostgreSQL partitionné ou Immuta). Archivage 7 ans conforme DORA Art.11, RGPD Art.30, Bâle III BCBS 239. Données archivées : user_id hashé, timestamp, requête anonymisée, modèle utilisé, tier routé, score qualité. Export réglementaire automatisé.'},
+  'explainability':{title:'Explainabilité IA — AI Act EU',body:'Conformité AI Act EU (Art.13) : les systèmes IA à haut risque (scoring crédit, AML) doivent être explicables. Mécanismes : SHAP values pour modèles ML de scoring, citations RAG avec source et score de confiance pour LLM, chain-of-thought loggué. Interface de visualisation pour les agents de conformité. Rapport d\'explicabilité généré à chaque décision critique.'},
+  'langsmith':{title:'LangSmith — Observabilité LLM',body:'Traces complètes de toutes les chaînes IA : latence par step, nombre de tokens, coût estimé, score faithfulness RAGAS. Évaluation automatique des réponses sur 500 golden samples par semaine. Dashboard qualité par use case (conseil, FAQ, compliance). Alertes si faithfulness < 0.80 ou hallucination rate > 3%.'},
+  'prometheus':{title:'Prometheus + Grafana — Métriques',body:'Métriques infrastructure : GPU utilization, VRAM usage, TTFT P50/P95/P99, throughput tokens/s, taux d\'erreur HTTP 5xx. Dashboards Grafana : operational dashboard (ops), quality dashboard (product), cost dashboard (FinOps). Alertes PagerDuty si TTFT P99 > 3s ou GPU util > 95% pendant 5min. SLA 99.9% mesuré en temps réel.'},
+  'siem':{title:'SIEM Splunk — Sécurité',body:'Corrélation des logs de sécurité : WAF, API Gateway, authentification, LLM guardrails. Détection d\'anomalies : tentatives de jailbreak répétées, exfiltration via prompt injection, accès hors horaires. Intégration SOAR pour réponse automatique (blocage IP, révocation token). SOC 24/7 avec playbooks bancaires spécifiques. Conformité NIS2 et DORA reporting.'}
+};
+function showDetail(id){
+  var d=details[id];
+  var panel=document.getElementById('detail-panel');
+  if(d){
+    document.getElementById('dp-title').textContent=d.title;
+    document.getElementById('dp-body').textContent=d.body;
+    panel.classList.add('show');
+    panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+// ANIMATE METRIC BARS
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(function(){
+    document.querySelectorAll('.mb-fill').forEach(function(b){
+      var w=b.style.width;
+      b.style.width='0';
+      setTimeout(function(){b.style.width=w},100);
+    });
+  },300);
+});
+</script>
+</body>
+</html>
