@@ -23,6 +23,10 @@
             "action": "Maintenance pr\u00e9ventive des capteurs Fusion",
             "result": "SUCCESS_SIMULATED",
             "confidence": 0.99
+        },
+        {
+            "exp_id": 5,
+            "type": "integration_zpuce"
         }
     ],
     "semantic": {},

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="refresh" content="60">
+<title>Z-H202.ia Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04060d;--bg2:#070c18;--bg3:#0b1225;--z:#00d4ff;--med:#00ffb3;--sec:#ff6b35;--gold:#ffd700;--vio:#a855f7;--text:#c8dff0;--text2:#5a7a9a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(26,32,48,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(26,32,48,0.4) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+.header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:2px;color:var(--z);border:1px solid var(--z);padding:.25rem .75rem;margin-bottom:1rem;text-transform:uppercase;animation:bp 2s infinite;}
+@keyframes bp{0%,100%{opacity:1;box-shadow:0 0 8px var(--z);}50%{opacity:.5;}}
+h1{font-family:'Orbitron',sans-serif;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;color:var(--z);text-shadow:0 0 30px rgba(0,212,255,.4);letter-spacing:3px;}
+h1 span{color:var(--gold);}
+.sub{margin-top:.5rem;font-size:.85rem;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;}
+.founder{margin-top:.5rem;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--med);}
+.ts-bar{display:flex;justify-content:center;gap:.75rem;margin-bottom:2rem;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text2);align-items:center;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--med);animation:pd 1.2s infinite;}
+@keyframes pd{0%,100%{opacity:1;}50%{opacity:.2;}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
+.sc{background:var(--bg2);border:1px solid rgba(0,212,255,.15);padding:1.25rem;position:relative;}
+.sc::before,.sc::after{content:'';position:absolute;width:12px;height:12px;}
+.sc::before{top:-1px;left:-1px;border-top:2px solid var(--ac);border-left:2px solid var(--ac);}
+.sc::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--ac);border-right:2px solid var(--ac);}
+.sc[data-c=z]{--ac:var(--z);} .sc[data-c=m]{--ac:var(--med);} .sc[data-c=s]{--ac:var(--sec);} .sc[data-c=g]{--ac:var(--gold);} .sc[data-c=v]{--ac:var(--vio);}
+.sl{font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:.4rem;font-family:'DM Mono',monospace;}
+.sv{font-family:'Orbitron',sans-serif;font-size:1.8rem;font-weight:700;color:var(--ac);text-shadow:0 0 15px currentColor;line-height:1;}
+.su{font-size:.7rem;color:var(--text2);margin-top:.3rem;font-family:'DM Mono',monospace;}
+.stitle{font-family:'Orbitron',sans-serif;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:1rem;padding-bottom:.4rem;border-bottom:1px solid rgba(255,255,255,.05);}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:2rem;}
+.mc{background:var(--bg3);border:1px solid rgba(255,255,255,.06);padding:1.25rem;position:relative;overflow:hidden;}
+.mc::before,.mc::after{content:'';position:absolute;width:14px;height:14px;}
+.mc::before{top:-1px;left:-1px;border-top:2px solid var(--mc);border-left:2px solid var(--mc);}
+.mc::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--mc);border-right:2px solid var(--mc);}
+.mc[data-m=zc]{--mc:var(--z);} .mc[data-m=zp]{--mc:var(--med);} .mc[data-m=sn]{--mc:var(--z);} .mc[data-m=ns]{--mc:var(--sec);} .mc[data-m=ro]{--mc:var(--gold);} .mc[data-m=le]{--mc:var(--vio);}
+.mbar{position:absolute;top:0;left:0;width:3px;height:100%;background:var(--mc);box-shadow:0 0 10px var(--mc);}
+.mh{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;padding-left:.5rem;}
+.mn{font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;color:var(--mc);letter-spacing:1.5px;}
+.mv{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--text2);margin-left:auto;}
+.mrs{padding-left:.5rem;}
+.mr{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.78rem;}
+.mr:last-child{border-bottom:none;}
+.rk{color:var(--text2);font-family:'DM Mono',monospace;font-size:.7rem;}
+.rv{color:var(--text);font-weight:600;}
+.rv.a{color:var(--mc);}
+.lp{background:var(--bg2);border:1px solid rgba(168,85,247,.2);padding:1.25rem;margin-bottom:2rem;position:relative;}
+.lp::before,.lp::after{content:'';position:absolute;width:14px;height:14px;}
+.lp::before{top:-1px;left:-1px;border-top:2px solid var(--vio);border-left:2px solid var(--vio);}
+.lp::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--vio);border-right:2px solid var(--vio);}
+.ledger-entry{display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-bottom:1px solid rgba(255,255,255,.03);font-family:'DM Mono',monospace;font-size:.72rem;}
+.ledger-entry:last-child{border-bottom:none;}
+.le-id{color:var(--vio);min-width:2.5rem;} .le-ts{color:var(--text2);} .le-act{color:var(--z);flex:1;} .le-st{color:var(--med);}
+.sov{background:var(--bg2);border:1px solid rgba(0,212,255,.15);padding:1rem 1.5rem;display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:2rem;justify-content:space-between;}
+.si{display:flex;align-items:center;gap:.5rem;font-family:'DM Mono',monospace;font-size:.72rem;}
+.sd{width:8px;height:8px;border-radius:50%;background:var(--med);box-shadow:0 0 6px var(--med);animation:pd 1.5s infinite;}
+.footer{text-align:center;margin-top:3rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--text2);}
+.footer span{color:var(--z);}
+@keyframes scan{0%{transform:translateY(-100%);}100%{transform:translateY(100vh);}}
+.scanline{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(transparent,rgba(0,212,255,.06),transparent);animation:scan 6s linear infinite;pointer-events:none;z-index:3;}
+</style></head><body>
+<div class="scanline"></div>
+<div class="wrap">
+<div class="header">
+  <div class="badge">⬡ Z-CORE ECOSYSTEM · ROBOOX ULTRA · 2026</div>
+  <h1>Z-H202<span>.ia</span></h1>
+  <div class="sub">Dashboard Souverain — Mode Ghost / Full Autonome</div>
+  <div class="founder">Fondateur : Mohammed Ilyes Zoubirou · milyes@netsecurepro.ca · NetSecurePro IA</div>
+</div>
+<div class="ts-bar"><div class="dot"></div><span>2026-04-18 05:08:46</span><span>· LOCAL_ONLY · 192.0.0.8</span></div>
+<div class="stats">
+  <div class="sc" data-c="z"><div class="sl">Expériences</div><div class="sv">6</div><div class="su">mémoire épisodique</div></div>
+  <div class="sc" data-c="m"><div class="sl">Décisions</div><div class="sv">15</div><div class="su">scellées crypto</div></div>
+  <div class="sc" data-c="s"><div class="sl">Audit Ledger</div><div class="sv">18</div><div class="su">entrées JSONL</div></div>
+  <div class="sc" data-c="g"><div class="sl">Mode</div><div class="sv" style="font-size:.9rem;padding-top:.4rem">FULL AUTONOME</div><div class="su">état système</div></div>
+  <div class="sc" data-c="v"><div class="sl">Shield</div><div class="sv" style="font-size:1rem;padding-top:.3rem">MAXIMUM</div><div class="su">2026-04-18 04:36:06</div></div>
+</div>
+<div class="stitle">⬡ Modules Actifs</div>
+<div class="mgrid">
+  <div class="mc" data-m="zc"><div class="mbar"></div><div class="mh"><span>⬡</span><span class="mn">Z-CORE</span><span class="mv">v1.1.0</span></div><div class="mrs"><div class="mr"><span class="rk">STATUS</span><span class="rv a">ACTIVE</span></div><div class="mr"><span class="rk">SOUVERAINETÉ</span><span class="rv">LOCAL_ONLY</span></div><div class="mr"><span class="rk">ÉTHIQUE</span><span class="rv a">ARMED</span></div><div class="mr"><span class="rk">CONFORMITÉ</span><span class="rv">RGPD·HDS·ISO27001</span></div></div></div>
+  <div class="mc" data-m="zp"><div class="mbar"></div><div class="mh"><span>🔬</span><span class="mn">IA_ZPUCE_CORE</span><span class="mv">v1.1.0</span></div><div class="mrs"><div class="mr"><span class="rk">BOOT</span><span class="rv a">SOUVERAIN</span></div><div class="mr"><span class="rk">EXTERNAL CLOUD</span><span class="rv a">REJECTED</span></div><div class="mr"><span class="rk">CONFIANCE</span><span class="rv a">100%</span></div><div class="mr"><span class="rk">INTÉGRATION</span><span class="rv a">ACTIVE</span></div></div></div>
+  <div class="mc" data-m="sn"><div class="mbar"></div><div class="mh"><span>📡</span><span class="mn">SENTINEL PULSE</span><span class="mv">Z-H202</span></div><div class="mrs"><div class="mr"><span class="rk">MODE</span><span class="rv a">GHOST/SOUVERAIN</span></div><div class="mr"><span class="rk">HEARTBEAT</span><span class="rv">60s</span></div><div class="mr"><span class="rk">SHIELD</span><span class="rv a">MAXIMUM</span></div><div class="mr"><span class="rk">LEDGER SYNC</span><span class="rv a">ACTIF</span></div></div></div>
+  <div class="mc" data-m="ns"><div class="mbar"></div><div class="mh"><span>🛡️</span><span class="mn">NETSECUREPRO</span><span class="mv">MODULE</span></div><div class="mrs"><div class="mr"><span class="rk">CHIFFREMENT</span><span class="rv a">AES-256-GCM</span></div><div class="mr"><span class="rk">TLS</span><span class="rv">1.3</span></div><div class="mr"><span class="rk">CVE GATE</span><span class="rv a">CVSS≥7.0</span></div><div class="mr"><span class="rk">AUDIT</span><span class="rv">RGPD ART.32</span></div></div></div>
+  <div class="mc" data-m="ro"><div class="mbar"></div><div class="mh"><span>🤖</span><span class="mn">ROBOOX ULTRA</span><span class="mv">TRAINING</span></div><div class="mrs"><div class="mr"><span class="rk">MODE</span><span class="rv a">FULL AUTONOME</span></div><div class="mr"><span class="rk">EXPÉRIENCES</span><span class="rv">6</span></div><div class="mr"><span class="rk">LAST SYNC</span><span class="rv a">2026-04-18 04:36:06</span></div></div></div>
+  <div class="mc" data-m="le"><div class="mbar"></div><div class="mh"><span>🔒</span><span class="mn">AUDIT LEDGER</span><span class="mv">CRYPTO</span></div><div class="mrs"><div class="mr"><span class="rk">TOTAL</span><span class="rv a">18 décisions</span></div><div class="mr"><span class="rk">FORMAT</span><span class="rv">JSONL scellé</span></div><div class="mr"><span class="rk">INTÉGRITÉ</span><span class="rv a">VÉRIFIÉE</span></div></div></div>
+</div>
+<div class="sov">
+  <div class="si"><div class="sd"></div><span>ZERO TRUST</span></div>
+  <div class="si"><div class="sd"></div><span>100% LOCAL</span></div>
+  <div class="si"><div class="sd"></div><span>RGPD ART.32</span></div>
+  <div class="si"><div class="sd"></div><span>HDS CONFORME</span></div>
+  <div class="si"><div class="sd"></div><span>ISO 27001</span></div>
+  <div class="si"><div class="sd"></div><span>EU AI ACT ART.13</span></div>
+</div>
+<div class="stitle">⬡ Audit Ledger — Dernières Décisions</div>
+<div class="lp"><div class="ledger-entry"><span class="le-id">#18</span><span class="le-ts">2026-04-17 22:40:16</span><span class="le-act">GHOST_HEARTBEAT</span><span class="le-st">STABLE</span></div>
+<div class="ledger-entry"><span class="le-id">#17</span><span class="le-ts">2026-04-17 22:39:16</span><span class="le-act">GHOST_HEARTBEAT</span><span class="le-st">STABLE</span></div>
+<div class="ledger-entry"><span class="le-id">#16</span><span class="le-ts">2026-04-17 18:35:00</span><span class="le-act">WAKE_PULSE</span><span class="le-st">EXECUTING</span></div>
+<div class="ledger-entry"><span class="le-id">#15</span><span class="le-ts">2026-04-17 00:00:00</span><span class="le-act">ZPUCE_FINAL_SYNC</span><span class="le-st">SEALED</span></div>
+<div class="ledger-entry"><span class="le-id">#14</span><span class="le-ts">2026-04-17 00:00:00</span><span class="le-act">ZPUCE_INTEGRATION</span><span class="le-st">SUCCESS</span></div>
+</div>
+<div class="footer"><span>Z-CORE ECOSYSTEM</span> · Mohammed Ilyes Zoubirou · NetSecurePro IA · Montréal, Québec<br>ORCID 0009-0007-7571-3178 · milyes@netsecurepro.ca</div>
+</div>
+<script>
+</script>
+</body></html>

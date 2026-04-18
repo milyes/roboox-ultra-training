@@ -1,3 +1,18 @@
-{"timestamp": "2026-04-12T13:10:53.551932", "action": "Maintenance pr\u00e9ventive des capteurs Fusion", "confidence": 0.99, "status": "APPROVED", "block_hash": "a4345b6d71e068916bb9f63e8df894fbbf6e27f7d5d41e9da2b27fcaceb1513f"}
-{"timestamp": "2026-04-12T13:14:50.514261", "action": "Maintenance pr\u00e9ventive des capteurs Fusion", "confidence": 0.99, "status": "APPROVED", "block_hash": "827e04418679f9196b06eb3c24a9acfa9ed195d7166e7f684b3bff3ccb0069ff"}
-{"timestamp": "2026-04-12T13:16:35.948077", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "72caca429b57841138706775997a79534db3cb764d68373db37e79aa7f738e3b"}
+{"timestamp": "2026-04-12T13:10:53.551932", "action": "Maintenance pr\u00e9ventive des capteurs Fusion", "confidence": 0.99, "status": "APPROVED", "block_hash": "a4345b6d71e068916bb9f63e8df894fbbf6e27f7d5d41e9da2b27fcaceb1513f", "id": 1}
+{"timestamp": "2026-04-12T13:14:50.514261", "action": "Maintenance pr\u00e9ventive des capteurs Fusion", "confidence": 0.99, "status": "APPROVED", "block_hash": "827e04418679f9196b06eb3c24a9acfa9ed195d7166e7f684b3bff3ccb0069ff", "id": 2}
+{"timestamp": "2026-04-12T13:16:35.948077", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "72caca429b57841138706775997a79534db3cb764d68373db37e79aa7f738e3b", "id": 3}
+{"timestamp": "2026-04-12T13:57:45.141674", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "87fc667b602de76ce5a49b4f1cbabfb0f28cd8f6bcace080b3a9f454c7b1ba6f", "id": 4}
+{"timestamp": "2026-04-13T01:18:24.953940", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "714ebce0a2cf8f166215dd48a231216790feda5339edd3f891ace59df4d609ed", "id": 5}
+{"timestamp": "2026-04-13T01:19:46.118717", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "062731d380ddc9d17591dede0c62d1ccbc61477505e98c7e92b36df9da78d412", "id": 6}
+{"timestamp": "2026-04-13T09:05:59.278252", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "e5fe874fec0ef5d4864b022c3714c716eed4546abfc746c7f5aebe5209ff55ef", "id": 7}
+{"timestamp": "2026-04-13T12:12:21.748391", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "86580348e038479f7161f9d6a720de8cb92e14cd7bbbf62181fd2fdb4f95bffc", "id": 8}
+{"timestamp": "2026-04-13T12:22:10.210628", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "0e37affc03aee71cfe3290902b2a68a7cab00c80dccf16257d45c655733a77ff", "id": 9}
+{"timestamp": "2026-04-13T12:27:04.509057", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "b38a516bfb50e1a6c32669c8b1cfc0b6e00094cdea49ca2ebbc2c754253badc9", "id": 10}
+{"timestamp": "2026-04-13T12:34:57.470906", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "dc5312adae3e4cc2c836e3c75989fac29221258b03e0826ce8f2143dd6edbf49", "id": 11}
+{"timestamp": "2026-04-13T12:37:08.828331", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "82b17287f4b65b9b52ef081dc753142f4bd580f7be9f2c5512ddc88ac064adfa", "id": 12}
+{"timestamp": "2026-04-14T18:05:18.445351", "action": "PROTOCOLE_VERROUILLAGE_URGENCE", "confidence": 1.0, "status": "REJECTED", "block_hash": "89622aa9b9eac63814ddd5458cb6309d6fff023def36fc0338566970571bdb1c", "id": 13}
+{"id": 14, "action": "ZPUCE_INTEGRATION", "status": "SUCCESS", "timestamp": "2026-04-17 00:00:00"}
+{"id": 15, "status": "SEALED", "action": "ZPUCE_FINAL_SYNC", "timestamp": "2026-04-17 00:00:00"}
+{"id": 16, "action": "WAKE_PULSE", "origin": "MOBILE_REMOTE", "status": "EXECUTING", "timestamp": "2026-04-17 18:35:00"}
+{"id": 17, "action": "GHOST_HEARTBEAT", "status": "STABLE", "timestamp": "2026-04-17 22:39:16"}
+{"id": 18, "action": "GHOST_HEARTBEAT", "status": "STABLE", "timestamp": "2026-04-17 22:40:16"}

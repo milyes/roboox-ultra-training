@@ -1,0 +1,76 @@
+# ============================================================
+#   ROBOOX ULTRA — main.py v2.0
+#   NetSecurePro IA — Code source privé
+#   Tous droits réservés — Z-H202.IA
+# ============================================================
+
+import asyncio
+from core.ia22_logic_full import IA22LogicKernel
+from core.netsecurepro_shield import NetSecureProShield
+from core.perception_fusion import PerceptionFusion
+from core.domain_router import DomainRouter
+from core.voice_engine import VoiceEngine
+
+async def run_roboox():
+    print("=" * 50)
+    print("   ROBOOX ULTRA — MODE FULL DOMAIN ACTIVÉ")
+    print("   NetSecurePro IA — Z-H202.IA")
+    print("=" * 50)
+    print()
+
+    # ── Init ─────────────────────────────────────────
+    brain  = IA22LogicKernel()
+    shield = NetSecureProShield()
+    vision = PerceptionFusion()
+    router = DomainRouter()
+    voice  = VoiceEngine()
+
+    # ── 1. Perception ────────────────────────────────
+    perception = vision.get_environment_snapshot()
+    print(f"👁️  Perception : {list(perception.keys()) if isinstance(perception, dict) else 'OK'}")
+
+    # ── 2. Routage de domaine ────────────────────────
+    domain = router.route(perception)
+    print(f"🌐 Domaine     : {domain}")
+    print(f"   {router.describe(domain)}")
+    print()
+
+    # ── 3. Cycle IA22 ────────────────────────────────
+    decision = await brain.process_cycle(perception)
+    action     = decision.get("action_plan", "AUCUNE")
+    confidence = decision.get("confidence", 0)
+    sovereign  = decision.get("sovereign_state", "?")
+
+    print(f"🧠 Décision    : {action}")
+    print(f"   Confiance   : {confidence * 100:.1f}%")
+    print(f"   Souveraineté: {sovereign}")
+    print()
+
+    # ── 4. Validation Shield ─────────────────────────
+    approved = shield.validate_decision(decision)
+
+    if approved:
+        print(f"✅ ACTION APPROUVÉE : {action}")
+
+        # Synthèse vocale — protégée contre les erreurs
+        try:
+            voice.synthesize(
+                f"Exécution de {action} en mode {domain}. "
+                f"Confiance {int(confidence * 100)} pourcent."
+            )
+        except Exception as e:
+            print(f"🔇 Voice engine : {e}")
+    else:
+        print(f"🚫 ACTION REJETÉE — Souveraineté non conforme.")
+        print(f"   État reçu : {sovereign} (attendu : LOCAL_ONLY)")
+
+    print()
+    print("=" * 50)
+    print("   SYSTÈME EN ATTENTE DE NOUVELLE PERCEPTION")
+    print("=" * 50)
+
+
+if __name__ == "__main__":
+    asyncio.run(run_roboox())
+
+
