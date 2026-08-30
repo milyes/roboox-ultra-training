@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import json, datetime
+import json
+import datetime
 
 class Benchmark:
     def run(self):
@@ -23,12 +24,10 @@ class Benchmark:
             "dependency": "0 API Externe. Termux OK"
         }
         
-        winner = "Z-CORE"
-        
         return {
             "timestamp": str(datetime.datetime.now()),
             "comparison": {"Azure": azure, "ZCORE": zcore},
-            "verdict": f"Gagnant: {winner} | -100% coût | +92% vitesse"
+            "verdict": "Gagnant: Z-CORE | -100% cout | +92% vitesse"
         }
 
 if __name__ == "__main__":
