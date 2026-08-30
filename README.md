@@ -1,43 +1,17 @@
-# Roboox Ultra IA – Dépôt d'Entraînement & Développement
+# Z-CORE OS v1.2
+### L'IA Souveraine - Zéro Dépendance - Zero Trust Natif
 
-**Version :** 2026.04  
-**Statut :** Active Development – Full Autonome Mode  
-**Auteur :** Mohammed Ilyes Zoubirou
+[[Sovereign](https://img.shields.io/badge/Zero%20Trust-Natif-black)]()
+[[License](https://img.shields.io/badge/License-MIT-green)]()
+[[Platform](https://img.shields.io/badge/Platform-Termux%20%7C%20Linux-blue)]()
+[[Cost](https://img.shields.io/badge/Cost-0%24%2Fmois-red)]()
 
----
+## MISSION
+Remplacer Azure/AWS avec 3 fichiers Python.
+Tourne sur Android Termux. 100% Local. Air-Gap. 0$ à vie.
 
-## 🎯 Présentation
+## LE STACK - 3 MODULES
 
-**Roboox Ultra IA** est un robot humanoïde agentique souverain conçu pour fonctionner en mode **Full Autonome Full Domaine**.
-
-Ce dépôt contient tout le code nécessaire à l'entraînement, au fine-tuning, au déploiement et à l'amélioration continue de :
-- **Z.IA** (Neural Core Engine)
-- **NetSecurePro IA Shield**
-- **IA22_LOGIC_ALGORITHM_FULL**
-- **Memory Fabric**
-- **Context Injection Engine**
-
----
-
-## 📁 Structure du Projet
-
-```bash
-roboox-ultra-training/
-├── core/                    # Z-CORE & Kernel souverain
-│   ├── zcore_kernel.py
-│   ├── ia22_logic_full.py
-│   └── netsecurepro_shield.py
-├── models/                  # Modèles ML (à entraîner)
-│   ├── slm/                 # Phi-4, Gemma-2B, etc.
-│   ├── vision/              # RT-DETR, YOLO11-Automotive
-│   └── moe_router/
-├── training/                # Scripts d'entraînement
-│   ├── datasets/
-│   ├── scripts/
-│   └── configs/
-├── z_ia/                    # Dual-Core Reasoning (Claude + Grok bridge)
-├── memory/                  # Memory Fabric (STM + LTM + Episodic)
-├── electron/                # Interface Electron + ML voilé
-├── simulation/              # Simulations physiques & scénarios
-├── docs/                    # Documentation technique
-└── README.md
+### 1. BenchmarkEngine.py
+Preuve que Z-CORE écrase le cloud.
+python benchmark.py
